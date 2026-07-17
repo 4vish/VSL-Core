@@ -137,8 +137,18 @@ A framework adapter must implement `vsl_core.conformance.protocol.VSLAdapter` (`
 ## Install
 
 ```
-pip install vsl-core
+pip install git+https://github.com/4vish/VSL-Core.git
 ```
+
+For local development:
+
+```
+git clone https://github.com/4vish/VSL-Core.git
+cd VSL-Core
+pip install -e .
+```
+
+Not yet on PyPI — installing from GitHub is the current path.
 
 ## Package layout
 
