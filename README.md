@@ -148,7 +148,7 @@ cd VSL-Core
 pip install -e .
 ```
 
-Not yet on PyPI — installing from GitHub is the current path.
+Not yet published to PyPI. The reserved distribution name is `super-semantics-vsl` (set in `pyproject.toml`) — once published, install will be `pip install super-semantics-vsl`, and you'll still `import vsl_core` in code (the distribution name and the importable module name are different, same as e.g. `beautifulsoup4`/`bs4`).
 
 ## Package layout
 

@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vsl-core"
+name = "super-semantics-vsl"
 version = "0.1.0"
 description = "Framework-agnostic and model-agnostic VSL (VERBA Specification Language) governance primitives."
 readme = "README.md"
