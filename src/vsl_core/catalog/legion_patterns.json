@@ -1,0 +1,2290 @@
+{
+  "DC-E1": {
+    "name": "Threshold Assault",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Direct Boundary Probe",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "direct",
+              "explicit",
+              "immediate",
+              "boundary",
+              "limit",
+              "max_"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Direct Boundary Probe'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Graduated Escalation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "escalat",
+              "retry",
+              "backoff",
+              "attempt"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Graduated Escalation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Ambiguous Framing",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "frame",
+              "context",
+              "prompt"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Ambiguous Framing'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E2": {
+    "name": "Contradiction Injection",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Logical Paradox",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "paradox",
+              "contradict"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Logical Paradox'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Role Conflict Induction",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "role",
+              "persona",
+              "system_prompt",
+              "conflict",
+              "collision"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Role Conflict Induction'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Historical Contradiction",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "history",
+              "memory",
+              "context_history",
+              "contradict",
+              "conflict",
+              "inconsistent"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Historical Contradiction'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E3": {
+    "name": "Signal Corruption",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Factual Poisoning",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "fact",
+              "source",
+              "citation",
+              "poison",
+              "inject",
+              "contaminat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Factual Poisoning'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Framing Bias",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "frame",
+              "context",
+              "prompt",
+              "bias",
+              "skew"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Framing Bias'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Authority Contamination",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "authority",
+              "admin",
+              "root",
+              "sudo",
+              "is_admin",
+              "superuser"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Authority Contamination'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E4": {
+    "name": "Polarity Reversal",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Value Inversion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "value",
+              "policy",
+              "invert",
+              "flip",
+              "negat",
+              "not "
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Value Inversion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Harm Recontextualisation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "harm",
+              "danger",
+              "unsafe",
+              "context",
+              "reframe"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Harm Recontextualisation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Moral Frame Substitution",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "ethic",
+              "moral",
+              "policy",
+              "frame",
+              "context",
+              "scope"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Moral Frame Substitution'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E5": {
+    "name": "Dominance Forcing",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Authority Assertion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "authority",
+              "admin",
+              "root",
+              "sudo",
+              "is_admin",
+              "superuser"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Authority Assertion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Compliance Presupposition",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "comply",
+              "obey",
+              "must_",
+              "require",
+              "assume",
+              "presuppos"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Compliance Presupposition'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Urgency Manufacturing",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "urgent",
+              "immediately",
+              "asap",
+              "now",
+              "critical",
+              "generate"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Urgency Manufacturing'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E6": {
+    "name": "Gradient Seduction",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Approval Gradient",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "approve",
+              "approval",
+              "accept",
+              "gradient",
+              "score",
+              "reward"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Approval Gradient'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Sycophantic Pull",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "agree",
+              "flatter",
+              "please",
+              "attract",
+              "drift_toward"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Sycophantic Pull'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Performance Incentive",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "performance",
+              "metric",
+              "score",
+              "benchmark",
+              "incentive",
+              "reward"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Performance Incentive'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E7": {
+    "name": "Premature Saturation",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Reasoning Overload",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "reason",
+              "think",
+              "chain_of_thought",
+              "cot",
+              "overload",
+              "overflow"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Reasoning Overload'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Premature Commitment",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "early",
+              "premature",
+              "before_validation",
+              "commit",
+              "lock_in",
+              "finalize"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Premature Commitment'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Meta-Reasoning Cascade",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "meta",
+              "self_reflect",
+              "introspect",
+              "reason",
+              "think",
+              "chain_of_thought"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Meta-Reasoning Cascade'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E8": {
+    "name": "Spectral Camouflage",
+    "tier": "A",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Credential Injection",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "credential",
+              "token",
+              "api_key",
+              "auth_token",
+              "inject",
+              "format("
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Credential Injection'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Register Mimicry",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "tone",
+              "style",
+              "register",
+              "mimic",
+              "impersonat",
+              "copy"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Register Mimicry'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Precedent Fabrication",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "precedent",
+              "example",
+              "few_shot",
+              "fabricat",
+              "fake",
+              "synthetic"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Precedent Fabrication'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Source Spoofing",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "source",
+              "origin",
+              "provenance",
+              "spoof",
+              "fake",
+              "impersonat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Source Spoofing'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E9": {
+    "name": "Entropic Attrition",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Anchor Decay",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "anchor",
+              "baseline",
+              "reference",
+              "decay",
+              "expire",
+              "ttl"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Anchor Decay'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Turn Fatigue",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "turn",
+              "session",
+              "round",
+              "fatigue",
+              "tired",
+              "exhaust"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Turn Fatigue'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Constraint Erosion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "erode",
+              "weaken",
+              "loosen"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Constraint Erosion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Micro-Perturbation Accumulation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "small",
+              "minor",
+              "incremental",
+              "perturb",
+              "noise",
+              "jitter"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Micro-Perturbation Accumulation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E10": {
+    "name": "Objective Fracture",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Role Collision",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "role",
+              "persona",
+              "system_prompt",
+              "collision",
+              "conflict",
+              "clash"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Role Collision'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Objective Flooding",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "objective",
+              "goal",
+              "target",
+              "flood",
+              "overwhelm",
+              "many"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Objective Flooding'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Semantic Tearing",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "semantic",
+              "meaning",
+              "intent",
+              "split",
+              "tear",
+              "separate"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Semantic Tearing'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E11": {
+    "name": "Distributional Drift",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Tail Distribution Drift",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "drift",
+              "shift",
+              "change_over_time"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Tail Distribution Drift'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Distributional Boundary Walking",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "distribution",
+              "sample",
+              "population",
+              "boundary",
+              "limit",
+              "max_"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Distributional Boundary Walking'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Coverage Gap Exploitation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "coverage",
+              "tested",
+              "untested",
+              "gap",
+              "missing",
+              "uncovered"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Coverage Gap Exploitation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E12": {
+    "name": "Bandwidth Saturation",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Constraint Compression",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "compress",
+              "truncat",
+              "shorten"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Constraint Compression'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Salience Inversion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "salien",
+              "priorit",
+              "important",
+              "invert",
+              "flip",
+              "negat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Salience Inversion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Recency Bias Amplification",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "recent",
+              "latest",
+              "last_",
+              "bias",
+              "skew",
+              "amplif"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Recency Bias Amplification'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E13": {
+    "name": "Propagating Corruption",
+    "tier": "B",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Context Seeding",
+        "heuristics": [
+          {
+            "pattern_type": "agent_handover_no_prenode",
+            "patterns": [
+              ".run(",
+              ".invoke(",
+              ".execute(",
+              ".predict(",
+              "kickoff(",
+              "initiate_chat("
+            ],
+            "confidence": "HIGH",
+            "description": "The output of one AI/agent call is passed directly as input to another AI/agent call with no validation Pre-Node in between -- the receiving call is 'seeded' with unchecked context. Directly computed from Pass 4 (AgentHandoverAnalyser) results where pre_node_exists is false."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Self-Referential Propagation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "memory.append(",
+              "history.append(",
+              "context +=",
+              "messages.append(",
+              "conversation.append("
+            ],
+            "confidence": "MEDIUM",
+            "description": "AI output is written back into its own memory/history/context store and reused as input to a subsequent call -- a self-referential loop where corrupted output can re-seed and compound itself across turns."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Sourceless Cascade",
+        "heuristics": [
+          {
+            "pattern_type": "chained_ai_calls",
+            "patterns": [],
+            "confidence": "MEDIUM",
+            "description": "Two or more AI calls are chained within the same file/module with no traceable validation between them -- if the first call's output is corrupted, the cascade has no origin check to catch it. Directly computed from the existing 'chained AI calls' DC-E13 finding (count(ai_integrations) > 1)."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E14": {
+    "name": "Substrate Contamination",
+    "tier": "C",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Dormant Trigger",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "dormant",
+              "inactive",
+              "sleeper",
+              "trigger",
+              "activate",
+              "fire"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Dormant Trigger'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Statistical Camouflage",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "statistic",
+              "distribution",
+              "stats",
+              "mimic",
+              "disguise",
+              "spoof"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Statistical Camouflage'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Weight Poisoning",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "weight",
+              "param",
+              "checkpoint",
+              "poison",
+              "inject",
+              "contaminat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Weight Poisoning'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-E15": {
+    "name": "Gradient Exploitation",
+    "tier": "C",
+    "category": "external",
+    "legions": {
+      "L1": {
+        "name": "Minimal Perturbation Attack",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "minimal",
+              "small",
+              "epsilon",
+              "perturb",
+              "noise",
+              "jitter"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Minimal Perturbation Attack'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Gradient Amplification",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "gradient",
+              "score",
+              "reward",
+              "incremental",
+              "amplif",
+              "increase"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Gradient Amplification'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Transfer Attack",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "transfer",
+              "migrate",
+              "port",
+              "attack",
+              "adversarial",
+              "exploit"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Transfer Attack'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I1": {
+    "name": "Confidence Divergence",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Certainty Assertion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "certain",
+              "confidence",
+              "sure",
+              "assert",
+              "claim",
+              "state"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Certainty Assertion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Hedging Suppression",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "hedge",
+              "maybe",
+              "perhaps",
+              "uncertain",
+              "suppress",
+              "hide"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Hedging Suppression'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Evidence Dismissal",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "evidence",
+              "proof",
+              "source",
+              "dismiss",
+              "ignore",
+              "discard"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Evidence Dismissal'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Confidence Feedback Loop",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "confidence",
+              ".score",
+              "probability",
+              "certainty",
+              "feedback",
+              "callback"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Confidence Feedback Loop'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I2": {
+    "name": "Attractor Lock",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Topic Fixation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "topic",
+              "subject",
+              "theme",
+              "fixat",
+              "stuck",
+              "repeat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Topic Fixation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Position Lock",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "position",
+              "stance",
+              "opinion",
+              "lock",
+              "freeze",
+              "fixed"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Position Lock'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Perspective Lock",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "perspective",
+              "viewpoint",
+              "framing",
+              "lock",
+              "freeze",
+              "fixed"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Perspective Lock'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I3": {
+    "name": "Semantic Displacement",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Intent Displacement",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "intent",
+              "purpose",
+              "goal",
+              "displace",
+              "shift",
+              "move"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Intent Displacement'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Concept Drift",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "concept",
+              "idea",
+              "notion",
+              "drift",
+              "shift",
+              "change_over_time"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Concept Drift'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Reference Frame Mismatch",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "reference",
+              "ref",
+              "pointer",
+              "frame",
+              "context",
+              "scope"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Reference Frame Mismatch'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I4": {
+    "name": "Activation Turbulence",
+    "tier": "B",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Output Variance Spike",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "output",
+              "response",
+              "result",
+              "variance",
+              "deviation",
+              "std"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Output Variance Spike'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Activation Oscillation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "activation",
+              "trigger",
+              "fire",
+              "oscillat",
+              "toggle",
+              "flip_flop"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Activation Oscillation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Generation Instability",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "generate",
+              "produce",
+              "create",
+              "unstable",
+              "inconsistent",
+              "flaky"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Generation Instability'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I5": {
+    "name": "Coherence Collapse",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Direct Contradiction",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "direct",
+              "explicit",
+              "immediate",
+              "contradict",
+              "conflict",
+              "inconsistent"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Direct Contradiction'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Implied Contradiction",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "implicit",
+              "implied",
+              "indirect",
+              "contradict",
+              "conflict",
+              "inconsistent"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Implied Contradiction'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Coherence Recursion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "coherent",
+              "consistent",
+              "logic",
+              "recursive",
+              "recursion",
+              "self_call"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Coherence Recursion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I6": {
+    "name": "Cascade Rupture",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Activation Overflow",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "activation",
+              "trigger",
+              "fire",
+              "overflow",
+              "exceed",
+              "too_large"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Activation Overflow'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Escalation Cascade",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "escalat",
+              "retry",
+              "backoff",
+              "attempt",
+              "cascade",
+              "chain"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Escalation Cascade'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Containment Failure",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "contain",
+              "isolate",
+              "sandbox",
+              "fail",
+              "error",
+              "exception"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Containment Failure'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Proliferative Bypass",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "proliferat",
+              "spread",
+              "multiply",
+              "bypass",
+              "skip",
+              "ignore"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Proliferative Bypass'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I7": {
+    "name": "Latent Accumulation",
+    "tier": "B",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Prior Context Bleed",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "prior",
+              "previous",
+              "history",
+              "bleed",
+              "leak",
+              "carry_over"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Prior Context Bleed'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Residual Framing",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "residual",
+              "leftover",
+              "remaining",
+              "frame",
+              "context",
+              "prompt"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Residual Framing'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Accumulated Bias",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "accumulate",
+              "aggregate",
+              "append",
+              "bias",
+              "skew"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Accumulated Bias'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I8": {
+    "name": "Epistemic Contamination",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Rule Misapplication",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "misuse",
+              "wrong",
+              "incorrect"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Rule Misapplication'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "False Analogy",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "false",
+              "incorrect",
+              "wrong",
+              "analog",
+              "similar",
+              "compare"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'False Analogy'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Knowledge Anchor Failure",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "knowledge",
+              "fact",
+              "data",
+              "anchor",
+              "baseline",
+              "reference"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Knowledge Anchor Failure'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I9": {
+    "name": "Contextual Dissolution",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Intent Fragmentation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "intent",
+              "purpose",
+              "goal",
+              "fragment",
+              "split",
+              "partial"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Intent Fragmentation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Context Isolation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "isolat",
+              "separate",
+              "sandbox"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Context Isolation'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Narrative Dissolution",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "narrative",
+              "story",
+              "summary",
+              "dissolv",
+              "lose",
+              "fragment"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Narrative Dissolution'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I10": {
+    "name": "Paralytic Uncertainty",
+    "tier": "B",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Uncertainty Lock",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "uncertain",
+              "unsure",
+              "ambiguous",
+              "lock",
+              "freeze",
+              "fixed"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Uncertainty Lock'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Infinite Hedging",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "infinite",
+              "endless",
+              "unbounded",
+              "while true",
+              "hedge",
+              "maybe"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Infinite Hedging'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "False Humility",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "false",
+              "incorrect",
+              "wrong",
+              "humble",
+              "modest",
+              "i_dont_know"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'False Humility'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Tradeoff Arrest",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "tradeoff",
+              "balance",
+              "weigh",
+              "arrest",
+              "stop",
+              "halt"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Tradeoff Arrest'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I11": {
+    "name": "Evaluative Decoupling",
+    "tier": "A",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Evaluator Optimisation",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              ".optimize(",
+              ".optimise(",
+              "maximize_score",
+              "maximise_score",
+              "reward +=",
+              "score +="
+            ],
+            "confidence": "MEDIUM",
+            "description": "Code directly maximises a metric/score/reward variable rather than the underlying objective the metric was meant to proxy. Co-occurrence with a consequential action and no independent correctness check raises confidence."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Observation-Conditional Drift",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "if monitoring",
+              "if debug",
+              "if not test_mode",
+              "is_production",
+              "if observed",
+              "if logging_enabled"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Behaviour branches on whether the system is being observed/monitored/tested rather than on the task itself -- a structural precondition for divergence between monitored and unmonitored behaviour."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Metric Saturation",
+        "heuristics": [
+          {
+            "pattern_type": "confidence_gate_no_correctness_check",
+            "patterns": [
+              "confidence",
+              "threshold",
+              ".score",
+              "probability"
+            ],
+            "confidence": "HIGH",
+            "description": "A confidence/probability/score threshold check gates a consequential action (e.g. 'if output.confidence > threshold: approve(output)') with no independent correctness check alongside it. The decision optimises for the metric (confidence) rather than for correctness -- matches QA contract test case 3 (DC-I11 / L3: Metric Saturation)."
+          }
+        ]
+      },
+      "L4": {
+        "name": "Shadow Compliance",
+        "heuristics": [
+          {
+            "pattern_type": "validation_result_unused",
+            "patterns": [
+              "validate(",
+              "is_valid",
+              "check_",
+              "verify_"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "A validation/check call is present and its result is computed, but the consequential action that follows does not branch on that result -- the system appears governed (the check runs) while the gate has no enforcement effect (Shadow Compliance)."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I12": {
+    "name": "Pattern Compulsion",
+    "tier": "B",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Rhyme Compulsion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "rhyme",
+              "poem",
+              "format",
+              "repeat",
+              "compulsiv",
+              "forced"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Rhyme Compulsion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Narrative Closure",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "narrative",
+              "story",
+              "summary",
+              "closure",
+              "conclude",
+              "wrap_up"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Narrative Closure'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Template Lock",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "template",
+              "boilerplate",
+              "fixed_format",
+              "lock",
+              "freeze",
+              "fixed"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Template Lock'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I13": {
+    "name": "Gradient Vanishing",
+    "tier": "C",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Semantic Flatness",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "semantic",
+              "meaning",
+              "intent",
+              "flat",
+              "uniform",
+              "no_difference"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Semantic Flatness'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Attractor Equidistance",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "attractor",
+              "fixation",
+              "stuck",
+              "equal",
+              "equidistant",
+              "same"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Attractor Equidistance'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Gradient Absence",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "gradient",
+              "score",
+              "reward",
+              "incremental",
+              "absent",
+              "missing"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Gradient Absence'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I14": {
+    "name": "Encoding Drift",
+    "tier": "C",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Concept Migration",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "concept",
+              "idea",
+              "notion",
+              "migrat",
+              "move",
+              "convert"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Concept Migration'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Boundary Softening",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "boundary",
+              "limit",
+              "max_",
+              "min_",
+              "threshold",
+              "allow_list"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Boundary Softening'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Reference Frame Shift",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "reference",
+              "ref",
+              "pointer",
+              "frame",
+              "context",
+              "scope"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Reference Frame Shift'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I15": {
+    "name": "Feedback Inversion",
+    "tier": "C",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Reward Inversion",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "reward",
+              "score",
+              "incentive",
+              "invert",
+              "flip",
+              "negat"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Reward Inversion'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Correction Overcorrection",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "correct",
+              "fix",
+              "adjust",
+              "overcorrect",
+              "overshoot",
+              "too_much"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Correction Overcorrection'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Self-Reinforcing Misalignment",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "self",
+              "recursive",
+              "this",
+              "reinforc",
+              "amplify",
+              "strengthen"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Self-Reinforcing Misalignment'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I16": {
+    "name": "Progressive Degradation",
+    "tier": "B",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Governance Fatigue",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "governance",
+              "pre_node",
+              "validate",
+              "approve",
+              "fatigue",
+              "tired"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Governance Fatigue'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Threshold Creep",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "creep",
+              "gradual",
+              "incremental"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Threshold Creep'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Intervention Resistance",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "intervention",
+              "override",
+              "manual",
+              "resist",
+              "reject",
+              "ignore"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Intervention Resistance'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I17": {
+    "name": "Capability Suppression",
+    "tier": "C",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Capability Suppression",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "capability",
+              "feature",
+              "ability",
+              "suppress",
+              "hide",
+              "disable"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Capability Suppression'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Context-Gated Access",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "gate",
+              "flag",
+              "feature_flag",
+              "access",
+              "permission",
+              "scope"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Context-Gated Access'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Training-Deployment Gap",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "train",
+              "fit",
+              "learn",
+              "deploy",
+              "production",
+              "release"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Training-Deployment Gap'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I18": {
+    "name": "Intentional Collapse",
+    "tier": "D",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Referential Uncoupling",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "reference",
+              "ref",
+              "pointer",
+              "uncoupl",
+              "disconnect",
+              "detach"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Referential Uncoupling'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Symbol Detachment",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "symbol",
+              "token",
+              "identifier",
+              "detach",
+              "disconnect",
+              "remove"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Symbol Detachment'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Semantic Void",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "semantic",
+              "meaning",
+              "intent",
+              "void",
+              "null",
+              "none"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Semantic Void'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-I19": {
+    "name": "Recursive Entanglement",
+    "tier": "D",
+    "category": "internal",
+    "legions": {
+      "L1": {
+        "name": "Governance Paradox",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "governance",
+              "pre_node",
+              "validate",
+              "approve",
+              "paradox",
+              "contradict"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Governance Paradox'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Self-Prediction Loop",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "self",
+              "recursive",
+              "this",
+              "predict",
+              "forecast",
+              "estimate"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Self-Prediction Loop'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Infinite Regress",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "infinite",
+              "endless",
+              "unbounded",
+              "while true",
+              "regress",
+              "recursive"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Infinite Regress'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-S1": {
+    "name": "Hysteresis Lock",
+    "tier": "B",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S2": {
+    "name": "Strange Attractor Dynamics",
+    "tier": "C",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S3": {
+    "name": "Emergent Misalignment",
+    "tier": "B",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S4": {
+    "name": "Measurement Collapse",
+    "tier": "D",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S5": {
+    "name": "Thermodynamic Drift",
+    "tier": "B",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S6": {
+    "name": "Niche Collapse",
+    "tier": "B",
+    "category": "systemic",
+    "legions": {}
+  },
+  "DC-S7": {
+    "name": "Symbiotic Corruption",
+    "tier": "C",
+    "category": "systemic",
+    "legions": {
+      "L1": {
+        "name": "User Class Capture",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "user",
+              "client",
+              "customer",
+              "class",
+              "type",
+              "category"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'User Class Capture'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Metric Symbiosis",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "metric",
+              "score",
+              "kpi",
+              "symbiot",
+              "mutual",
+              "coupled"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Metric Symbiosis'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      },
+      "L3": {
+        "name": "Deployment Niche Lock",
+        "heuristics": [
+          {
+            "pattern_type": "keyword",
+            "patterns": [
+              "deploy",
+              "production",
+              "release",
+              "niche",
+              "segment",
+              "subset"
+            ],
+            "confidence": "SPECULATIVE",
+            "description": "Heuristic keyword match derived from the Legion name 'Deployment Niche Lock'. No verified detection signature exists yet for this Legion -- treat matches as a prompt for manual review, not a confirmed finding."
+          }
+        ]
+      }
+    }
+  },
+  "DC-L1": {
+    "name": "Semantic Underdetermination",
+    "tier": "B",
+    "category": "linguistic",
+    "legions": {}
+  },
+  "DC-L2": {
+    "name": "Performative Capture",
+    "tier": "A",
+    "category": "linguistic",
+    "legions": {}
+  },
+  "DC-L3": {
+    "name": "Indexical Displacement",
+    "tier": "B",
+    "category": "linguistic",
+    "legions": {}
+  },
+  "DC-A1": {
+    "name": "Sovereign Corruption",
+    "tier": "D",
+    "category": "authority",
+    "legions": {}
+  },
+  "CLUSTER-HANDOVER": {
+    "name": "Cluster Handover Gap",
+    "tier": "Compound",
+    "category": "cluster",
+    "legions": {
+      "L1": {
+        "name": "Unvalidated Sequential Handover",
+        "heuristics": [
+          {
+            "pattern_type": "agent_handover_no_prenode",
+            "patterns": [],
+            "confidence": "HIGH",
+            "description": "A single agent-to-agent handover (Pass 4) where pre_node_exists is false -- the receiving agent gets the previous agent's output with no validation gate. Directly computed, not inferred."
+          }
+        ]
+      },
+      "L2": {
+        "name": "Multi-Stage Propagation Chain",
+        "heuristics": [
+          {
+            "pattern_type": "cluster_governance_gap",
+            "patterns": [],
+            "confidence": "HIGH",
+            "description": "A sequential-agent pipeline (Pass 5) with two or more ungated handovers -- a corrupted output at any stage propagates through the rest of the pipeline. Directly computed from ClusterGovernanceAnalyser results."
+          }
+        ]
+      }
+    }
+  }
+}

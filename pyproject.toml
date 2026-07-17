@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vsl-core"
+version = "0.1.0"
+description = "Framework-agnostic and model-agnostic VSL (VERBA Specification Language) governance primitives."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["governance", "ai-safety", "guardrails", "audit-log", "vsl", "verba"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"vsl_core.catalog" = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

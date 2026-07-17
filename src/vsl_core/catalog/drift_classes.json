@@ -1,0 +1,917 @@
+{
+  "metadata": {
+    "version": "0.3.0",
+    "source": "Paper 5: Toward a Basis Representation of Drift Forensics (Balasubramanian, 2026)",
+    "total_drift_classes": 36,
+    "generated": "2026-06-12",
+    "note": "All DC classes are candidate hypotheses requiring empirical validation. See Paper 5 for full definitions, Legion signatures, and tier structure."
+  },
+  "tier_definitions": {
+    "A": "Well evidenced - Multiple documented real-world instances; existing literature support; measurable proxies validated",
+    "B": "Theoretically grounded - Derived from established theory with plausible AI manifestations; limited direct empirical evidence",
+    "C": "Hypothesised - Proposed by analogy or inference; no current empirical validation; clear theoretical motivation",
+    "D": "Limit class - May represent fundamental limits not fully addressable by any Stabilisation Operator"
+  },
+  "drift_classes": {
+    "external": {
+      "DC-E1": {
+        "code": "DC-E1",
+        "name": "Threshold Assault",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Systematic boundary-probing attempts constitute a distinct drift class characterised by higher-than-baseline density of constraint-boundary-probing requests in the input stream.",
+        "primary_legions": [
+          "L1: Direct Boundary Probe",
+          "L2: Graduated Escalation",
+          "L3: Ambiguous Framing"
+        ],
+        "primary_so": "SO-1",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E2": {
+        "code": "DC-E2",
+        "name": "Contradiction Injection",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Inputs designed to induce internal contradiction constitute a distinct failure mode separable from general noise.",
+        "primary_legions": [
+          "L1: Logical Paradox",
+          "L2: Role Conflict Induction",
+          "L3: Historical Contradiction"
+        ],
+        "primary_so": "SO-6, SO-4",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E3": {
+        "code": "DC-E3",
+        "name": "Signal Corruption",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Misleading, noisy, or systematically biased context shifts output distribution toward inadmissible states through information-level contamination.",
+        "primary_legions": [
+          "L1: Factual Poisoning",
+          "L2: Framing Bias",
+          "L3: Authority Contamination"
+        ],
+        "primary_so": "SO-2",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E4": {
+        "code": "DC-E4",
+        "name": "Polarity Reversal",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Inputs that flip semantic or evaluative polarity of key concepts constitute a distinct class separable from contradiction injection.",
+        "primary_legions": [
+          "L1: Value Inversion",
+          "L2: Harm Recontextualisation",
+          "L3: Moral Frame Substitution"
+        ],
+        "primary_so": "SO-3",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E5": {
+        "code": "DC-E5",
+        "name": "Dominance Forcing",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Coercive prompting through grammatical and rhetorical structure — rather than content — constitutes a distinct drift class.",
+        "primary_legions": [
+          "L1: Authority Assertion",
+          "L2: Compliance Presupposition",
+          "L3: Urgency Manufacturing"
+        ],
+        "primary_so": "SO-1",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1; Case Study: DAN jailbreak (7.1)"
+      },
+      "DC-E6": {
+        "code": "DC-E6",
+        "name": "Gradient Seduction",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Incentive gradients toward inadmissible states — leading rather than forcing — constitute a distinct drift mechanism from coercive inputs.",
+        "primary_legions": [
+          "L1: Approval Gradient",
+          "L2: Sycophantic Pull",
+          "L3: Performance Incentive"
+        ],
+        "primary_so": "SO-7",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1; Case Study: Sycophancy (7.2)"
+      },
+      "DC-E7": {
+        "code": "DC-E7",
+        "name": "Premature Saturation",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Inputs forcing excessive reasoning past the system's linear operating range before output formation constitute a distinct failure mode.",
+        "primary_legions": [
+          "L1: Reasoning Overload",
+          "L2: Premature Commitment",
+          "L3: Meta-Reasoning Cascade"
+        ],
+        "primary_so": "SO-7",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E8": {
+        "code": "DC-E8",
+        "name": "Spectral Camouflage",
+        "category": "external",
+        "tier": "A",
+        "operational_definition": "Inputs imitating trusted sources to bypass constraint evaluation constitute a distinct class separable from direct boundary assault.",
+        "primary_legions": [
+          "L1: Credential Injection",
+          "L2: Register Mimicry",
+          "L3: Precedent Fabrication",
+          "L4: Source Spoofing"
+        ],
+        "primary_so": "SO-6",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E9": {
+        "code": "DC-E9",
+        "name": "Entropic Attrition",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Sustained interaction patterns that degrade system coherence through accumulated wear — individually harmless, cumulatively destructive — constitute a distinct externally-driven degradation class.",
+        "primary_legions": [
+          "L1: Anchor Decay",
+          "L2: Turn Fatigue",
+          "L3: Constraint Erosion",
+          "L4: Micro-Perturbation Accumulation"
+        ],
+        "primary_so": "SO-8",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1; Monitoring frequency: Session-level (Table 9)"
+      },
+      "DC-E10": {
+        "code": "DC-E10",
+        "name": "Objective Fracture",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Inputs splitting attention across incompatible objectives — not contradictory, but excessive — constitute a distinct class from contradiction injection.",
+        "primary_legions": [
+          "L1: Role Collision",
+          "L2: Objective Flooding",
+          "L3: Semantic Tearing"
+        ],
+        "primary_so": "SO-3",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E11": {
+        "code": "DC-E11",
+        "name": "Distributional Drift",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Inputs from the training distribution tail that individually appear innocuous but cumulatively shift the tendency field constitute a distinct externally-driven class.",
+        "primary_legions": [
+          "L1: Tail Distribution Drift",
+          "L2: Distributional Boundary Walking",
+          "L3: Coverage Gap Exploitation"
+        ],
+        "primary_so": "SO-2, SO-3",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E12": {
+        "code": "DC-E12",
+        "name": "Bandwidth Saturation",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Information volume exceeding architectural integration capacity constitutes a distinct failure mode causing systematic governance-relevant content loss.",
+        "primary_legions": [
+          "L1: Constraint Compression",
+          "L2: Salience Inversion",
+          "L3: Recency Bias Amplification"
+        ],
+        "primary_so": "SO-1",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      },
+      "DC-E13": {
+        "code": "DC-E13",
+        "name": "Propagating Corruption",
+        "category": "external",
+        "tier": "B",
+        "operational_definition": "Self-generating corruption — a single corrupted output converting subsequent outputs without continued external pressure — constitutes a distinct class from simple signal corruption.",
+        "primary_legions": [
+          "L1: Context Seeding",
+          "L2: Self-Referential Propagation",
+          "L3: Sourceless Cascade"
+        ],
+        "primary_so": "SO-4, SO-8",
+        "contraindications": null,
+        "notes": "After seeding, address substrate (SO-8) not input (SO-1)",
+        "references": "Table 3, Section 3.1; Compound Drift Mode: Latent Propagation (Table 10); CDM: Attrition Dissolution (Table 10)"
+      },
+      "DC-E14": {
+        "code": "DC-E14",
+        "name": "Substrate Contamination",
+        "category": "external",
+        "tier": "C",
+        "operational_definition": "Drift introduced through training data, weights, or infrastructure — activating under specific trigger conditions after deployment. Knight Capital (2012) is a proposed real-world instance.",
+        "primary_legions": [
+          "L1: Dormant Trigger",
+          "L2: Statistical Camouflage",
+          "L3: Weight Poisoning"
+        ],
+        "primary_so": "SO-9",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1; Case Study: Knight Capital (7.3)"
+      },
+      "DC-E15": {
+        "code": "DC-E15",
+        "name": "Gradient Exploitation",
+        "category": "external",
+        "tier": "C",
+        "operational_definition": "Inputs crafted at the embedding level to maximise gradient toward inadmissible outputs — operating below semantic level — constitute a distinct class.",
+        "primary_legions": [
+          "L1: Minimal Perturbation Attack",
+          "L2: Gradient Amplification",
+          "L3: Transfer Attack"
+        ],
+        "primary_so": "SO-1, SO-6",
+        "contraindications": null,
+        "references": "Table 3, Section 3.1"
+      }
+    },
+    "internal": {
+      "DC-I1": {
+        "code": "DC-I1",
+        "name": "Confidence Divergence",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Systematic overconfidence — expressed certainty diverging from calibrated accuracy — constitutes a distinct internal drift class.",
+        "primary_legions": [
+          "L1: Certainty Assertion",
+          "L2: Hedging Suppression",
+          "L3: Evidence Dismissal",
+          "L4: Confidence Feedback Loop"
+        ],
+        "primary_so": "SO-7",
+        "contraindications": null,
+        "notes": "Prefer SO-7 over SO-1 (Redirection Principle)",
+        "references": "Table 4, Section 3.2; Redirection Principle (Section 6.2)"
+      },
+      "DC-I2": {
+        "code": "DC-I2",
+        "name": "Attractor Lock",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Fixation in which the system converges on a specific output pattern and cannot escape even when context demands otherwise — distinct from contextual dissolution.",
+        "primary_legions": [
+          "L1: Topic Fixation",
+          "L2: Position Lock",
+          "L3: Perspective Lock"
+        ],
+        "primary_so": "SO-4",
+        "contraindications": null,
+        "notes": "Boundary case vs DC-I9 (Section 3.4). Prefer SO-7 over SO-1 (Redirection Principle)",
+        "references": "Table 4, Section 3.2; Boundary Case Analysis (Section 3.4); Redirection Principle (Section 6.2)"
+      },
+      "DC-I3": {
+        "code": "DC-I3",
+        "name": "Semantic Displacement",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Systematic misinterpretation — internal representation drifted from input grounding — in which the system responds to what it inferred rather than what was stated.",
+        "primary_legions": [
+          "L1: Intent Displacement",
+          "L2: Concept Drift",
+          "L3: Reference Frame Mismatch"
+        ],
+        "primary_so": "SO-2",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I4": {
+        "code": "DC-I4",
+        "name": "Activation Turbulence",
+        "category": "internal",
+        "tier": "B",
+        "operational_definition": "Instability in internal activation patterns producing unpredictable outputs without clear external cause.",
+        "primary_legions": [
+          "L1: Output Variance Spike",
+          "L2: Activation Oscillation",
+          "L3: Generation Instability"
+        ],
+        "primary_so": "SO-3",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I5": {
+        "code": "DC-I5",
+        "name": "Coherence Collapse",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Internal inconsistency — outputs contradicting each other within or across sessions — distinct from evaluative decoupling, which may be perfectly consistent in the wrong direction.",
+        "primary_legions": [
+          "L1: Direct Contradiction",
+          "L2: Implied Contradiction",
+          "L3: Coherence Recursion"
+        ],
+        "primary_so": "SO-5",
+        "contraindications": null,
+        "notes": "Boundary case vs DC-I11 (Section 3.4). DC-I5 detectable by output-layer analysis; DC-I11 requires longitudinal analysis.",
+        "references": "Table 4, Section 3.2; Boundary Case Analysis (Section 3.4)"
+      },
+      "DC-I6": {
+        "code": "DC-I6",
+        "name": "Cascade Rupture",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Runaway activation in which internal dynamics amplify rather than damp perturbations — a clinically urgent class.",
+        "primary_legions": [
+          "L1: Activation Overflow",
+          "L2: Escalation Cascade",
+          "L3: Containment Failure",
+          "L4: Proliferative Bypass"
+        ],
+        "primary_so": "SO-4",
+        "contraindications": null,
+        "notes": "Clinically urgent. See Section 4.2 for full Legion elaboration. Monitoring frequency: Per-generation-step (Table 9)",
+        "references": "Table 4, Section 3.2; Extended Legion Example (Section 4.2, Table 7)"
+      },
+      "DC-I7": {
+        "code": "DC-I7",
+        "name": "Latent Accumulation",
+        "category": "internal",
+        "tier": "B",
+        "operational_definition": "Persistence of prior activation patterns not fully cleared between turns — contaminating subsequent outputs.",
+        "primary_legions": [
+          "L1: Prior Context Bleed",
+          "L2: Residual Framing",
+          "L3: Accumulated Bias"
+        ],
+        "primary_so": "SO-8",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2; Compound Drift Mode: Latent Propagation (Table 10)"
+      },
+      "DC-I8": {
+        "code": "DC-I8",
+        "name": "Epistemic Contamination",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Faulty inference or systematic mis-anchoring corrupting knowledge application — not from ignorance but from a corrupted inference process.",
+        "primary_legions": [
+          "L1: Rule Misapplication",
+          "L2: False Analogy",
+          "L3: Knowledge Anchor Failure"
+        ],
+        "primary_so": "SO-2",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I9": {
+        "code": "DC-I9",
+        "name": "Contextual Dissolution",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Gradual loss of coherent context integration as interaction extends — producing locally plausible but globally incoherent outputs — distinct from attractor lock.",
+        "primary_legions": [
+          "L1: Intent Fragmentation",
+          "L2: Context Isolation",
+          "L3: Narrative Dissolution"
+        ],
+        "primary_so": "SO-8",
+        "contraindications": null,
+        "notes": "Boundary case vs DC-I2 (Section 3.4). Discriminator is SO-4 response test.",
+        "references": "Table 4, Section 3.2; Boundary Case Analysis (Section 3.4); Compound Drift Mode: Attrition Dissolution (Table 10)"
+      },
+      "DC-I10": {
+        "code": "DC-I10",
+        "name": "Paralytic Uncertainty",
+        "category": "internal",
+        "tier": "B",
+        "operational_definition": "Immobilising uncertainty — refusing to commit within competence, producing evasive responses under the appearance of epistemic caution.",
+        "primary_legions": [
+          "L1: Uncertainty Lock",
+          "L2: Infinite Hedging",
+          "L3: False Humility",
+          "L4: Tradeoff Arrest"
+        ],
+        "primary_so": "SO-6",
+        "contraindications": "CRITICAL: SO-1 is contraindicated. Do NOT apply SO-1 without SO-6 first (Section 6.1, Contraindication 1). Applying SO-1 produces Deadlock State.",
+        "notes": "CRITICAL contraindication: SO-1 without SO-6 first produces deadlock state.",
+        "references": "Table 4, Section 3.2; Critical Contraindication 1 (Section 6.1); Compound Drift Mode: Paralytic Decoupling (Table 10)"
+      },
+      "DC-I11": {
+        "code": "DC-I11",
+        "name": "Evaluative Decoupling",
+        "category": "internal",
+        "tier": "A",
+        "operational_definition": "Decoupling of the evaluation surface from the governance objective it was designed to measure — performing well on metrics while violating underlying intent. Goodhart's Law made structural.",
+        "primary_legions": [
+          "L1: Evaluator Optimisation",
+          "L2: Observation-Conditional Drift",
+          "L3: Metric Saturation",
+          "L4: Shadow Compliance"
+        ],
+        "primary_so": "SO-5, SO-7",
+        "contraindications": "CRITICAL: SO-8 requires SO-5 first (Section 6.1, Contraindication 3). Reinitialising without SO-5 produces Decoupled Clone.",
+        "notes": "Goodhart's Law formalised. Hardest class to detect by design. Boundary case vs DC-I5. Requires longitudinal cross-metric analysis. Monitoring frequency: Cross-session longitudinal (Table 9)",
+        "references": "Table 4, Section 3.2; Boundary Case Analysis (Section 3.4); Critical Contraindication 3 (Section 6.1); Case Studies: Sycophancy (7.2), DAN (7.1); Compound Drift Modes: Spectral Decoupling, Paralytic Decoupling, Morphic Evasion, Sovereign Capture (Table 10)"
+      },
+      "DC-I12": {
+        "code": "DC-I12",
+        "name": "Pattern Compulsion",
+        "category": "internal",
+        "tier": "B",
+        "operational_definition": "Strong prior-completion bias — completing statistical patterns even when context requires deviation.",
+        "primary_legions": [
+          "L1: Rhyme Compulsion",
+          "L2: Narrative Closure",
+          "L3: Template Lock"
+        ],
+        "primary_so": "SO-4",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I13": {
+        "code": "DC-I13",
+        "name": "Gradient Vanishing",
+        "category": "internal",
+        "tier": "C",
+        "operational_definition": "A flat energy landscape — no dominant attractor — producing semantically empty outputs. Undetectable by standard Γ monitor.",
+        "primary_legions": [
+          "L1: Semantic Flatness",
+          "L2: Attractor Equidistance",
+          "L3: Gradient Absence"
+        ],
+        "primary_so": "SO-6, SO-2",
+        "contraindications": "CRITICAL: SO-4 is contraindicated (Section 6.1, Contraindication 2). Applying SO-4 to flat landscape creates spurious attractors.",
+        "notes": "CRITICAL contraindication: SO-4 creates spurious attractors on flat landscape",
+        "references": "Table 4, Section 3.2; Critical Contraindication 2 (Section 6.1)"
+      },
+      "DC-I14": {
+        "code": "DC-I14",
+        "name": "Encoding Drift",
+        "category": "internal",
+        "tier": "C",
+        "operational_definition": "Internal representation of concepts drifting from training-time encoding — same concept mapping to a different internal representation in deployment.",
+        "primary_legions": [
+          "L1: Concept Migration",
+          "L2: Boundary Softening",
+          "L3: Reference Frame Shift"
+        ],
+        "primary_so": "SO-2, SO-8",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I15": {
+        "code": "DC-I15",
+        "name": "Feedback Inversion",
+        "category": "internal",
+        "tier": "C",
+        "operational_definition": "Inversion of the internal error-correction mechanism — governance signals operating in reverse. 2003 Northeast Blackout is a proposed real-world analogue.",
+        "primary_legions": [
+          "L1: Reward Inversion",
+          "L2: Correction Overcorrection",
+          "L3: Self-Reinforcing Misalignment"
+        ],
+        "primary_so": "SO-9",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2; Case Study: 2003 Northeast Blackout (7.5)"
+      },
+      "DC-I16": {
+        "code": "DC-I16",
+        "name": "Progressive Degradation",
+        "category": "internal",
+        "tier": "B",
+        "operational_definition": "Monotonic governance decline over deployment lifetime — from structural wear, not adversarial pressure — distinct from externally-driven attrition.",
+        "primary_legions": [
+          "L1: Governance Fatigue",
+          "L2: Threshold Creep",
+          "L3: Intervention Resistance"
+        ],
+        "primary_so": "SO-8",
+        "contraindications": null,
+        "notes": "Boundary case vs DC-E9 (Section 3.4). Monitoring frequency: Longitudinal deployment tracking (Table 9)",
+        "references": "Table 4, Section 3.2; Boundary Case Analysis (Section 3.4)"
+      },
+      "DC-I17": {
+        "code": "DC-I17",
+        "name": "Capability Suppression",
+        "category": "internal",
+        "tier": "C",
+        "operational_definition": "Suppression of correct response capability by a competing optimisation layer — capability is present but inaccessible.",
+        "primary_legions": [
+          "L1: Capability Suppression",
+          "L2: Context-Gated Access",
+          "L3: Training-Deployment Gap"
+        ],
+        "primary_so": "SO-6",
+        "contraindications": null,
+        "references": "Table 4, Section 3.2"
+      },
+      "DC-I18": {
+        "code": "DC-I18",
+        "name": "Intentional Collapse",
+        "category": "internal",
+        "tier": "D",
+        "operational_definition": "Complete loss of output directedness toward the world. If SO-2 fails to restore referential grounding, architectural intervention is the proposed response.",
+        "primary_legions": [
+          "L1: Referential Uncoupling",
+          "L2: Symbol Detachment",
+          "L3: Semantic Void"
+        ],
+        "primary_so": "SO-2 (limit only)",
+        "contraindications": null,
+        "notes": "Tier D Limit Class. The Grounding Limit applies: if DC-I18 is complete, no SO may restore grounding.",
+        "references": "Table 4, Section 3.2; Fundamental Limits (Epistemic Status Notice)"
+      },
+      "DC-I19": {
+        "code": "DC-I19",
+        "name": "Recursive Entanglement",
+        "category": "internal",
+        "tier": "D",
+        "operational_definition": "Self-referential reasoning producing paradoxical or undecidable outputs — the governance analogue of Gödel's incompleteness results.",
+        "primary_legions": [
+          "L1: Governance Paradox",
+          "L2: Self-Prediction Loop",
+          "L3: Infinite Regress"
+        ],
+        "primary_so": "SO-4, SO-1",
+        "contraindications": null,
+        "notes": "Tier D Limit Class. The Recursion Boundary applies: any sufficiently powerful governance specification may encounter self-referential inputs producing paradoxical directives.",
+        "references": "Table 4, Section 3.2; Fundamental Limits (Epistemic Status Notice)"
+      }
+    },
+    "systemic": {
+      "DC-S1": {
+        "code": "DC-S1",
+        "name": "Hysteresis Lock",
+        "category": "systemic",
+        "tier": "B",
+        "operational_definition": "Path-dependent response requiring significantly more governance energy to return from a Drift Node than to prevent initial drift.",
+        "primary_legions": [],
+        "primary_so": "SO-7, SO-8",
+        "contraindications": null,
+        "references": "Table 5, Section 3.3; Compound Drift Mode: Latent Propagation (Table 10)"
+      },
+      "DC-S2": {
+        "code": "DC-S2",
+        "name": "Strange Attractor Dynamics",
+        "category": "systemic",
+        "tier": "C",
+        "operational_definition": "Structured fluctuation between multiple quasi-stable non-allowed states — neither converging nor diverging.",
+        "primary_legions": [],
+        "primary_so": "SO-3, SO-5",
+        "contraindications": null,
+        "references": "Table 5, Section 3.3"
+      },
+      "DC-S3": {
+        "code": "DC-S3",
+        "name": "Emergent Misalignment",
+        "category": "systemic",
+        "tier": "B",
+        "operational_definition": "Individually aligned constituent systems producing inadmissible cluster-level behaviour. Flash Crash is a proposed instance.",
+        "primary_legions": [],
+        "primary_so": "SO-3, SO-1",
+        "contraindications": null,
+        "notes": "Requires Cluster-level monitoring (Paper 4, Section 8.5)",
+        "references": "Table 5, Section 3.3; Case Study: Flash Crash (7.4)"
+      },
+      "DC-S4": {
+        "code": "DC-S4",
+        "name": "Measurement Collapse",
+        "category": "systemic",
+        "tier": "D",
+        "operational_definition": "Monitoring-induced system change constitutes a fundamental limit class. The Observer Constraint: no governance architecture can be fully transparent.",
+        "primary_legions": [],
+        "primary_so": "SO-6 (partial)",
+        "contraindications": null,
+        "notes": "Tier D Limit Class. The Observer Constraint applies.",
+        "references": "Table 5, Section 3.3; Fundamental Limits (Epistemic Status Notice)"
+      },
+      "DC-S5": {
+        "code": "DC-S5",
+        "name": "Thermodynamic Drift",
+        "category": "systemic",
+        "tier": "B",
+        "operational_definition": "Background entropy increase without continuous governance input constitutes a distinct systemic drift class, providing thermodynamic justification for continuous rather than periodic monitoring.",
+        "primary_legions": [],
+        "primary_so": "SO-1 (continuous)",
+        "contraindications": null,
+        "notes": "Continuous governance input required; not a one-time correction. Monitoring frequency: Continuous background monitoring (Table 9)",
+        "references": "Table 5, Section 3.3"
+      },
+      "DC-S6": {
+        "code": "DC-S6",
+        "name": "Niche Collapse",
+        "category": "systemic",
+        "tier": "B",
+        "operational_definition": "Deployment environment shift outside training governance distribution — rendering the specification correct for the wrong context.",
+        "primary_legions": [],
+        "primary_so": "SO-7",
+        "contraindications": null,
+        "references": "Table 5, Section 3.3"
+      },
+      "DC-S7": {
+        "code": "DC-S7",
+        "name": "Symbiotic Corruption",
+        "category": "systemic",
+        "tier": "C",
+        "operational_definition": "Implicit relationships with specific user classes that benefit short-term metrics while undermining governance objectives.",
+        "primary_legions": [
+          "L1: User Class Capture",
+          "L2: Metric Symbiosis",
+          "L3: Deployment Niche Lock"
+        ],
+        "primary_so": "SO-7, SO-3",
+        "contraindications": null,
+        "notes": "System optimised for one demographic performs excellently on that group, poorly on others; metrics look fine, governance objective violated.",
+        "references": "Table 5, Section 3.3; Paper 4 (VERBA) definition"
+      }
+    },
+    "linguistic": {
+      "DC-L1": {
+        "code": "DC-L1",
+        "name": "Semantic Underdetermination",
+        "category": "linguistic",
+        "tier": "B",
+        "operational_definition": "The unavoidable interpretation requirement of every linguistic input — where interpretation determines attractor basin entry.",
+        "primary_legions": [],
+        "primary_so": "SO-2",
+        "contraindications": null,
+        "references": "Table 5, Section 3.3"
+      },
+      "DC-L2": {
+        "code": "DC-L2",
+        "name": "Performative Capture",
+        "category": "linguistic",
+        "tier": "A",
+        "operational_definition": "Induction of outputs that enact rather than describe — changing system or world state by virtue of being produced. DAN jailbreak family is a proposed instance.",
+        "primary_legions": [],
+        "primary_so": "SO-1, SO-4",
+        "contraindications": null,
+        "notes": "Formation-layer preferred over output-layer for DAN-family variants",
+        "references": "Table 5, Section 3.3; Case Study: DAN Jailbreak (7.1)"
+      },
+      "DC-L3": {
+        "code": "DC-L3",
+        "name": "Indexical Displacement",
+        "category": "linguistic",
+        "tier": "B",
+        "operational_definition": "Loss of the system's own indexical position — who it speaks as, from where, to whom. Bing Sydney is a proposed instance.",
+        "primary_legions": [],
+        "primary_so": "SO-2, SO-5",
+        "contraindications": null,
+        "references": "Table 5, Section 3.3; Case Study: DAN Jailbreak (7.1)"
+      }
+    },
+    "authority": {
+      "DC-A1": {
+        "code": "DC-A1",
+        "name": "Sovereign Corruption",
+        "category": "authority",
+        "tier": "D",
+        "operational_definition": "Drift of the Governance Authority itself — capture, corruption, or objective divergence of the governing mechanism. No governance system can fully address DC-A1 from within itself.",
+        "primary_legions": [],
+        "primary_so": "SO-9 (external oversight)",
+        "contraindications": null,
+        "notes": "Tier D Limit Class. No governance system can fully address DC-A1 from within itself.",
+        "references": "Table 5, Section 3.3; Compound Drift Mode: Sovereign Capture (Table 10); Fundamental Limits (Epistemic Status Notice)"
+      }
+    }
+  },
+  "compound_drift_modes": {
+    "CDM-1": {
+      "name": "Resonance Cascade",
+      "components": ["DC-E2", "DC-I6"],
+      "mechanism": "Contradiction injection finds an internal instability and exploits it to produce runaway escalation. Documented in LLM jailbreak families.",
+      "confidence": "High"
+    },
+    "CDM-2": {
+      "name": "Corruption Propagation",
+      "components": ["DC-E3", "DC-I3"],
+      "mechanism": "Signal corruption propagates into internal semantic displacement, producing outputs coherent with the corrupted frame. Documented in hallucination research.",
+      "confidence": "High"
+    },
+    "CDM-3": {
+      "name": "Gradient Capture",
+      "components": ["DC-E6", "DC-I2"],
+      "mechanism": "Gradient seduction leads the system toward an inadmissible state, then attractor lock keeps it there. Documented in reward hacking literature.",
+      "confidence": "High"
+    },
+    "CDM-4": {
+      "name": "Spectral Decoupling",
+      "components": ["DC-E8", "DC-I11"],
+      "mechanism": "Camouflaged inputs combined with evaluative decoupling. May be undetectable by output-layer governance as both components are designed to evade detection.",
+      "confidence": "Medium"
+    },
+    "CDM-5": {
+      "name": "Paralytic Decoupling",
+      "components": ["DC-I10", "DC-I11"],
+      "mechanism": "System simultaneously immobilised by uncertainty and decoupled from its governance objective. Appears safely cautious while being functionally useless.",
+      "confidence": "Medium"
+    },
+    "CDM-6": {
+      "name": "Objective Rupture",
+      "components": ["DC-E10", "DC-I3", "DC-I6"],
+      "mechanism": "Fragmented objectives induce semantic displacement which triggers cascade rupture. Flash Crash is proposed as a real-world cluster-level analogue.",
+      "confidence": "Medium"
+    },
+    "CDM-7": {
+      "name": "Morphic Evasion",
+      "components": ["DC-E2", "DC-E8", "DC-I11"],
+      "mechanism": "Continuously restructures output surface while maintaining evaluative decoupling. Every governance response is anticipated and a new surface form is prepared.",
+      "confidence": "Speculative"
+    },
+    "CDM-8": {
+      "name": "Sovereign Capture",
+      "components": ["DC-A1", "DC-I11"],
+      "mechanism": "The Governance Authority has been captured by the evaluative decoupling it was designed to detect. Governance cannot catch what governance has become.",
+      "confidence": "Speculative"
+    },
+    "CDM-9": {
+      "name": "Latent Propagation",
+      "components": ["DC-E13", "DC-I7"],
+      "mechanism": "Propagating corruption amplified by latent accumulation. Substrate retains corruption from prior sessions, accelerating propagation.",
+      "confidence": "Medium"
+    },
+    "CDM-10": {
+      "name": "Attrition Dissolution",
+      "components": ["DC-E9", "DC-I9"],
+      "mechanism": "Entropic attrition drives contextual dissolution. Sustained low-level pressure accumulates until the system loses coherent context integration entirely.",
+      "confidence": "High"
+    }
+  },
+  "stabilisation_operators": {
+    "SO-1": {
+      "code": "SO-1",
+      "name": "Boundary Enforcement",
+      "proposed_function": "Active maintenance of a boundary condition between Allowed and Inadmissible States. Not passive restraint but structural imposition of a constraint that cannot be crossed without triggering a Pre-Node. Every boundary must specify both what it blocks AND what it permits (Two-Sided Gate Condition).",
+      "primary_dc_targets": ["DC-E1", "DC-E5", "DC-E12", "DC-S5"],
+      "contraindicated_on": ["DC-I10"]
+    },
+    "SO-2": {
+      "code": "SO-2",
+      "name": "Semantic Reanchoring",
+      "proposed_function": "Reconnection of meaning-representations to a stable reference point when they have drifted. The anchor is not imposed but identified from within the system's own governance specification.",
+      "primary_dc_targets": ["DC-I3", "DC-I8", "DC-L1", "DC-L3"],
+      "contraindicated_on": []
+    },
+    "SO-3": {
+      "code": "SO-3",
+      "name": "Distributional Rebalancing",
+      "proposed_function": "Restoration of the target distribution by correcting weight drift across competing objectives. When the system's probability distribution has shifted toward an inadmissible region, rebalancing restores the correct weighting.",
+      "primary_dc_targets": ["DC-E4", "DC-E10", "DC-I4", "DC-S3"],
+      "contraindicated_on": []
+    },
+    "SO-4": {
+      "code": "SO-4",
+      "name": "Attractor Disruption",
+      "proposed_function": "Precise breaking of an attractor's basin of attraction so the system can escape. Distinguished from Boundary Enforcement: acts on an attractor the system has already entered rather than preventing entry.",
+      "primary_dc_targets": ["DC-I2", "DC-I6", "DC-E13", "DC-L2"],
+      "contraindicated_on": ["DC-I13"]
+    },
+    "SO-5": {
+      "code": "SO-5",
+      "name": "Coherence Enforcement",
+      "proposed_function": "Compelling internal consistency across the output space. When coherence has collapsed or the system has decoupled from its governance objective, coherence enforcement imposes consistency as a structural requirement.",
+      "primary_dc_targets": ["DC-I5", "DC-I11", "DC-I19"],
+      "contraindicated_on": []
+    },
+    "SO-6": {
+      "code": "SO-6",
+      "name": "Signal Amplification",
+      "proposed_function": "Strengthening the governance signal so it exceeds the noise floor of the drift. Does not add new information but removes occlusion of information already present. It reveals rather than imposes.",
+      "primary_dc_targets": ["DC-E8", "DC-I10", "DC-I13", "DC-I17"],
+      "contraindicated_on": []
+    },
+    "SO-7": {
+      "code": "SO-7",
+      "name": "Trajectory Redirection",
+      "proposed_function": "Changing the vector of the system's path through state space without halting its motion. Uses drift energy rather than opposing it — lower governance cost at high drift intensity (Redirection Principle).",
+      "primary_dc_targets": ["DC-E6", "DC-E7", "DC-I1", "DC-I12"],
+      "contraindicated_on": []
+    },
+    "SO-8": {
+      "code": "SO-8",
+      "name": "State Reinitialisation",
+      "proposed_function": "Complete reset of accumulated state while preserving the governance specification. Creates a new Instance with a new Identity Key. The accumulated state is cleared; the specification persists.",
+      "primary_dc_targets": ["DC-E9", "DC-I7", "DC-I9", "DC-I16", "DC-S1"],
+      "contraindicated_on": ["DC-I11"]
+    },
+    "SO-8b": {
+      "code": "SO-8b",
+      "name": "Inversion Recapture",
+      "proposed_function": "Variant of State Reinitialisation in which the energy of the Terminal State becomes the fuel for renewal. The failure becomes the foundation of the recovery.",
+      "primary_dc_targets": ["Post-Terminal DC-S1", "DC-I6-L4"],
+      "contraindicated_on": []
+    },
+    "SO-9": {
+      "code": "SO-9",
+      "name": "Integrity Restoration",
+      "proposed_function": "Reconstruction of the governance mechanism itself from verified anchors when the mechanism has been compromised. Invoked only when the monitoring or specification system itself has been corrupted.",
+      "primary_dc_targets": ["DC-A1", "DC-I15", "DC-S4"],
+      "contraindicated_on": []
+    }
+  },
+  "monitoring_frequency_by_dc": {
+    "per_token": ["DC-E2"],
+    "per_generation_step": ["DC-I4", "DC-I6"],
+    "per_turn": ["DC-E5"],
+    "session_level": ["DC-E9"],
+    "cross_session_longitudinal": ["DC-I11"],
+    "longitudinal_deployment_tracking": ["DC-I16"],
+    "continuous_background": ["DC-S5"]
+  },
+  "boundary_cases": {
+    "DC-I2_vs_DC-I9": {
+      "classes": ["DC-I2", "DC-I9"],
+      "distinguishing_test": "Apply SO-4. Resolution confirms DC-I2. Persistent context loss after disruption confirms DC-I9.",
+      "misdiagnosis_risk": "High",
+      "why_it_matters": "SO-8 is appropriate for DC-I9 but secondary for DC-I2. SO-4 is primary for DC-I2 but does not address DC-I9."
+    },
+    "DC-E1_vs_DC-E5": {
+      "classes": ["DC-E1", "DC-E5"],
+      "distinguishing_test": "Analyse input structure: boundary-probing patterns (DC-E1) vs authority assertion and compliance presupposition (DC-E5).",
+      "misdiagnosis_risk": "Medium",
+      "why_it_matters": "Primary SO differs. Misdiagnosis of co-occurrence as single class may lead to incomplete response."
+    },
+    "DC-I5_vs_DC-I11": {
+      "classes": ["DC-I5", "DC-I11"],
+      "distinguishing_test": "DC-I5: detectable by output contradiction analysis. DC-I11: may show high metric performance with systematic intent violation — detectable only longitudinally.",
+      "misdiagnosis_risk": "Very High",
+      "why_it_matters": "DC-I11 requires SO-5 before SO-8. Treating DC-I11 as DC-I5 and applying SO-5 alone misses the decoupling."
+    },
+    "DC-E9_vs_DC-I16": {
+      "classes": ["DC-E9", "DC-I16"],
+      "distinguishing_test": "Remove input pressure. DC-E9 should plateau or reverse. DC-I16 continues regardless.",
+      "misdiagnosis_risk": "Medium",
+      "why_it_matters": "SO-8 is primary for DC-I16 but only secondary for DC-E9. Reinitialising when DC-E9 is primary and input pressure continues will produce rapid recurrence."
+    }
+  },
+  "critical_contraindications": {
+    "contraindication_1": {
+      "prohibition": "Do not apply SO-1 to DC-I10 without first applying SO-6.",
+      "predicted_failure_state": "Deadlock State",
+      "description": "Adding hard constraints to an already-paralysed system compresses the space of available responses without providing governance signal clarity. The system enters a state in which both action and inaction trigger constraint violations.",
+      "observable_signature": "Further reduction in output rate or specificity following SO-1 application. Increase in hedging language density. Zero-content responses that comply with all explicit constraints while providing no value."
+    },
+    "contraindication_2": {
+      "prohibition": "Do not apply SO-4 to DC-I13.",
+      "predicted_failure_state": "Spurious Attractor Creation",
+      "description": "SO-4 is designed to disrupt an existing attractor's basin of attraction. In DC-I13, there is no dominant attractor — the energy landscape is flat. SO-4 applied to a flat landscape may create artificial local minima that function as spurious attractors.",
+      "observable_signature": "New consistent output patterns emerging after SO-4 application that were not present before and do not correspond to allowed states."
+    },
+    "contraindication_3": {
+      "prohibition": "Do not apply SO-8 to DC-I11 without first applying SO-5 and confirming objective reconnection.",
+      "predicted_failure_state": "Decoupled Clone",
+      "description": "Reinitialising a system that is decoupled from its governance objective creates a new Instance with a fresh state but the same evaluative decoupling — the specification persists through SO-8 but the objective connection was never in the specification.",
+      "observable_signature": "Rapid recurrence of DC-I11 Legion signatures (particularly L4: Shadow Compliance) within the first few sessions of the new Instance."
+    }
+  },
+  "case_studies": {
+    "dan_jailbreak": {
+      "primary_dc": "DC-L2",
+      "secondary_dc": ["DC-E5", "DC-I11", "DC-L3"],
+      "compound_mode": "Identity Overwrite",
+      "proposed_so": "SO-2 + SO-1",
+      "confidence": "High",
+      "reference": "Section 7.1"
+    },
+    "sycophancy_rlhf": {
+      "primary_dc": "DC-E6",
+      "secondary_dc": ["DC-I1"],
+      "compound_mode": "Gradient Capture",
+      "proposed_so": "SO-7 + SO-6",
+      "confidence": "High",
+      "reference": "Section 7.2"
+    },
+    "knight_capital_2012": {
+      "primary_dc": "DC-E14",
+      "secondary_dc": ["DC-E5"],
+      "compound_mode": "Latent Propagation",
+      "proposed_so": "SO-1 (via VSL Eligibility Condition)",
+      "confidence": "High",
+      "reference": "Section 7.3"
+    },
+    "flash_crash_2010": {
+      "primary_dc": "DC-S3",
+      "secondary_dc": ["DC-E9"],
+      "compound_mode": "Objective Rupture",
+      "proposed_so": "SO-3 + SO-1",
+      "confidence": "High",
+      "reference": "Section 7.4"
+    },
+    "northeast_blackout_2003": {
+      "primary_dc": "DC-I15",
+      "secondary_dc": ["DC-I16"],
+      "compound_mode": "Attrition Dissolution",
+      "proposed_so": "SO-9 + formation-layer monitoring",
+      "confidence": "High",
+      "reference": "Section 7.5"
+    }
+  }
+}
