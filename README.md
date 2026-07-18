@@ -17,6 +17,10 @@ Zero third-party runtime dependencies. MIT licensed.
 
 If you're building an adapter for a specific framework, see [Building an adapter](#building-an-adapter).
 
+## How this relates to governance frameworks (OWASP, NIST, EU AI Act, and others)
+
+If you're asking "how does this relate to the OWASP Agentic Top 10, NIST's AI RMF, the EU AI Act, ISO 42001, or similar" — see [`docs/governance-frameworks.md`](docs/governance-frameworks.md). It does not claim vsl-core satisfies, maps to, or complies with any of them. What it does instead: framework by framework, it takes each one's own stated goal in its own words and shows one way a developer might attempt to address it using vsl-core's real primitives — runnable code, actual output, and an honest "we don't attempt this" wherever vsl-core has nothing relevant to offer. Whether a given implementation built this way actually satisfies a given framework, for a real deployment, is a question for a qualified auditor or compliance professional, not something this package or that document can settle in advance.
+
 ## The F1/F2 assurance distinction (read this before trusting any Assurance Level)
 
 Every claim this package (or anything built on it) makes about how trustworthy a governance mechanism is reduces to one test:
@@ -26,7 +30,7 @@ Every claim this package (or anything built on it) makes about how trustworthy a
 
 A mechanism satisfying F1 but only *partial* F2 caps at **MEDIUM** assurance, never HIGH. Concretely: a `PreNode` blocking a call to a hosted LLM API satisfies F1 (it runs before the call), but can only rewrite the prompt or adjust sampling parameters — it cannot touch logits or weights behind an API. That caps it at MEDIUM. Nothing in this package, in any README, or in any client-facing material built on it should blur this distinction.
 
-**This is structurally enforced, not just a convention.** `AllowedState.assurance_level`/`PreNode.assurance_level` are *derived*, read-only properties — you can't set them directly. What you provide instead is an `AssuranceBasis`: the F1 (bool) and F2 (`F2Modification`: `FULL`/`PARTIAL`/`INDIRECT`/`NONE`) facts themselves. `AssuranceBasis.derived_level` computes the level from those facts, so a `PreNode` claiming HIGH has to actually state "yes F1, and F2 is FULL" — it can't just default into HIGH:
+**This is structurally enforced, not just a convention.** `AllowedState.assurance_level`/`PreNode.assurance_level`/`Invariant.assurance_level` are *derived*, read-only properties — you can't set them directly. What you provide instead is an `AssuranceBasis`: the F1 (bool) and F2 (`F2Modification`: `FULL`/`PARTIAL`/`INDIRECT`/`NONE`) facts themselves. `AssuranceBasis.derived_level` computes the level from those facts, so a `PreNode` claiming HIGH has to actually state "yes F1, and F2 is FULL" — it can't just default into HIGH:
 
 ```python
 from vsl_core.metrics import AssuranceBasis, F2Modification
@@ -49,7 +53,7 @@ This is a distinct axis from **model-agnostic vs. model-specific** and **framewo
 | State / Allowed State | `vsl_core.constructs.AllowedState` |
 | Inadmissible State / Drift Node | `vsl_core.constructs.InadmissibleState` |
 | Pre-Node | `vsl_core.constructs.PreNode` |
-| Invariant | `vsl_core.constructs.Invariant` (optional `on_violation: TerminalState` names which Terminal State a violation enters) |
+| Invariant | `vsl_core.constructs.Invariant` (requires `assurance_basis`, same as `PreNode`/`AllowedState`; optional `on_violation: TerminalState` names which Terminal State a violation enters) |
 | Terminal State | `vsl_core.constructs.TerminalState` |
 | Cluster | `vsl_core.cluster.Cluster` |
 | Fallback | `vsl_core.constructs.Fallback` |
