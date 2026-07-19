@@ -17,6 +17,10 @@ Zero third-party runtime dependencies. MIT licensed.
 
 If you're building an adapter for a specific framework, see [Building an adapter](#building-an-adapter).
 
+## Getting started (including with an AI coding assistant)
+
+[`docs/building-with-vsl-core.md`](docs/building-with-vsl-core.md) is the guide for going from "I have an agent, or an idea for one" to working code: how to find the decision points that actually need governing, which parts of the flow are automatic versus something you write yourself, and a domain-agnostic project scaffold with a worked example. Its companion, [`docs/vsl-core-primitives.json`](docs/vsl-core-primitives.json), is the same material as exact, structured facts — every class, field, and code sample in it has been executed against the real package. Both are written to be handed directly to an AI coding assistant (Claude Code, Codex, or similar) as reference material — no special setup required, though pointing your own project's `CLAUDE.md`/equivalent at them is what makes an assistant reach for them without being asked each time.
+
 ## How this relates to governance frameworks (OWASP, NIST, EU AI Act, and others)
 
 If you're asking "how does this relate to the OWASP Agentic Top 10, NIST's AI RMF, the EU AI Act, ISO 42001, or similar" — see [`docs/governance-frameworks.md`](docs/governance-frameworks.md). It does not claim vsl-core satisfies, maps to, or complies with any of them. What it does instead: framework by framework, it takes each one's own stated goal in its own words and shows one way a developer might attempt to address it using vsl-core's real primitives — runnable code, actual output, and an honest "we don't attempt this" wherever vsl-core has nothing relevant to offer. Whether a given implementation built this way actually satisfies a given framework, for a real deployment, is a question for a qualified auditor or compliance professional, not something this package or that document can settle in advance.

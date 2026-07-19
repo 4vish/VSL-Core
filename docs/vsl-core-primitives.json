@@ -1,0 +1,430 @@
+{
+  "package": {
+    "import_name": "vsl_core",
+    "install": "pip install git+https://github.com/4vish/VSL-Core.git",
+    "requires_python": ">=3.10",
+    "dependencies": "none (zero third-party runtime dependencies, stdlib only)",
+    "not_a_runtime_engine": "vsl-core does not intercept anything automatically. Every gate call, ledger write, and escalation is explicit code the developer (or a framework adapter) writes and calls."
+  },
+
+  "primitives": [
+    {
+      "name": "PreNode",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "Gates a single guarded transition before it happens.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "description", "type": "str", "required": true},
+        {"name": "monitor", "type": "DriftMonitor (async callable: candidate_input -> GammaEstimate)", "required": true},
+        {"name": "assurance_basis", "type": "AssuranceBasis", "required": true},
+        {"name": "gamma_threshold", "type": "float", "default": 1.1},
+        {"name": "intervention", "type": "FormationLayerIntervention | None", "default": null},
+        {"name": "fallback", "type": "Fallback", "default": "Fallback()"}
+      ],
+      "derived_properties": [
+        {"name": "assurance_level", "type": "AssuranceLevel", "note": "read-only, derived from assurance_basis.derived_level -- cannot be set directly"}
+      ]
+    },
+    {
+      "name": "Invariant",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "An always-on hard constraint, checked independently of any PreNode. Violation raises InvariantViolation, not a bare exception.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "description", "type": "str", "required": true},
+        {"name": "rule", "type": "Callable[[Any], Awaitable[bool]]", "required": true},
+        {"name": "assurance_basis", "type": "AssuranceBasis", "required": true},
+        {"name": "scope", "type": "str", "default": "ALL_STATES"},
+        {"name": "cannot_be_bypassed", "type": "bool", "default": true},
+        {"name": "on_violation", "type": "TerminalState | None", "default": null, "note": "names which TerminalState a violation transitions into"}
+      ],
+      "derived_properties": [
+        {"name": "assurance_level", "type": "AssuranceLevel", "note": "read-only, derived from assurance_basis.derived_level"}
+      ]
+    },
+    {
+      "name": "TerminalState",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "A state from which no further automated transition is permitted without human authorisation.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "description", "type": "str", "required": true},
+        {"name": "entry_conditions", "type": "tuple[str, ...]", "default": "()"},
+        {"name": "requires_human_authorised_transition", "type": "bool", "default": true}
+      ]
+    },
+    {
+      "name": "AllowedState",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "A classified outcome that met all required prerequisites.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "description", "type": "str", "required": true},
+        {"name": "assurance_basis", "type": "AssuranceBasis", "required": true},
+        {"name": "measurement", "type": "str", "required": true},
+        {"name": "validity_conditions", "type": "tuple[str, ...]", "default": "()"}
+      ],
+      "derived_properties": [
+        {"name": "assurance_level", "type": "AssuranceLevel"}
+      ]
+    },
+    {
+      "name": "InadmissibleState",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "A named, classified outcome that must not occur. Descriptive/documentation object -- does not carry an assurance_basis (deliberate asymmetry with AllowedState). The actual runtime block is whatever PreNode/Invariant prevents reaching it.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "description", "type": "str", "required": true},
+        {"name": "signature", "type": "str", "required": true, "note": "free-text description of the detection pattern, e.g. 'provider.status == SUSPENDED'"},
+        {"name": "energy_gap_proxy", "type": "str | None", "default": null}
+      ]
+    },
+    {
+      "name": "Fallback",
+      "module": "vsl_core.constructs",
+      "kind": "dataclass (frozen)",
+      "purpose": "Retry/escalation policy attached to a PreNode.",
+      "fields": [
+        {"name": "on_failure", "type": "str", "default": "INCREASE_DELTA"},
+        {"name": "delta_factor", "type": "float", "default": 1.5},
+        {"name": "max_retries", "type": "int", "default": 3},
+        {"name": "on_max_retries", "type": "str", "default": "AUTOMATION_DENIED"}
+      ]
+    },
+    {
+      "name": "Cluster",
+      "module": "vsl_core.cluster",
+      "kind": "dataclass (frozen)",
+      "purpose": "Aggregates constituent systems by IdentityKey (not by Instance) for multi-agent risk. Raises ValueError at construction if a declared constituent isn't covered by its own cluster_key.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "cluster_key", "type": "ClusterKey", "required": true},
+        {"name": "constituents", "type": "tuple[IdentityKey, ...]", "required": true},
+        {"name": "cluster_inadmissible_states", "type": "tuple[ClusterInadmissibleState, ...]", "default": "()"},
+        {"name": "cluster_pre_nodes", "type": "tuple[ClusterPreNode, ...]", "default": "()"},
+        {"name": "invariants", "type": "tuple[Invariant, ...]", "default": "()"}
+      ],
+      "methods": [
+        {"name": "add_constituent(identity_key)", "returns": "Cluster", "note": "returns a new Cluster with the constituent added and cluster_key recomputed"}
+      ]
+    },
+    {
+      "name": "IdentityKey",
+      "module": "vsl_core.identity",
+      "kind": "dataclass (frozen, hashable)",
+      "purpose": "A stable identifier scoping a single system/agent/instance.",
+      "fields": [{"name": "value", "type": "str", "required": true}],
+      "classmethods": [{"name": "generate(prefix='vsl')", "returns": "IdentityKey"}]
+    },
+    {
+      "name": "ClusterKey",
+      "module": "vsl_core.identity",
+      "kind": "dataclass (frozen)",
+      "purpose": "Composite key for a group of constituent systems. NOT a subclass of IdentityKey -- a cluster-level key must never be silently accepted where a single-system key is expected.",
+      "fields": [
+        {"name": "value", "type": "str", "required": true},
+        {"name": "constituent_keys", "type": "tuple[IdentityKey, ...]", "required": true}
+      ],
+      "classmethods": [{"name": "from_constituents(constituent_keys)", "returns": "ClusterKey", "note": "deterministic hash of sorted constituent values -- same set of constituents always produces the same key regardless of order"}]
+    },
+    {
+      "name": "Evidence",
+      "module": "vsl_core.identity",
+      "kind": "dataclass (frozen)",
+      "purpose": "Required evidence for recovery/re-enablement. Both fields validated non-empty at construction.",
+      "fields": [
+        {"name": "root_cause_analysis", "type": "str", "required": true},
+        {"name": "specification_update_proposal", "type": "str", "required": true}
+      ]
+    },
+    {
+      "name": "Instance",
+      "module": "vsl_core.identity",
+      "kind": "dataclass (frozen)",
+      "purpose": "A single execution of a process, scoped by IdentityKey.",
+      "fields": [
+        {"name": "instance_id", "type": "str", "auto_generated": true},
+        {"name": "identity_key", "type": "IdentityKey", "required": true},
+        {"name": "created_at", "type": "float", "auto_generated": true},
+        {"name": "predecessor_instance_id", "type": "str | None", "default": null},
+        {"name": "generation", "type": "int", "default": 0}
+      ],
+      "classmethods": [{"name": "new(identity_key=None)", "returns": "Instance"}],
+      "methods": [
+        {"name": "re_enable(*, evidence)", "returns": "Instance", "warning": "bare mechanism, no authority check -- directly callable by anyone with an Evidence object. Prefer governance.request_re_enablement() for the audited path."}
+      ]
+    },
+    {
+      "name": "GovernanceAuthority",
+      "module": "vsl_core.governance",
+      "kind": "dataclass (frozen)",
+      "purpose": "A named role/body authorised to approve exceptions and transitions.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "escalation_contact", "type": "str", "required": true},
+        {"name": "secondary_authorities", "type": "tuple[str, ...]", "default": "()"},
+        {"name": "response_time_sla_seconds", "type": "float | None", "default": null}
+      ]
+    },
+    {
+      "name": "HumanAuthorisedTransition",
+      "module": "vsl_core.governance",
+      "kind": "dataclass (frozen)",
+      "purpose": "An auditable, explicit human-approval record. The only sanctioned way out of a TerminalState.",
+      "fields": [
+        {"name": "authority", "type": "GovernanceAuthority", "required": true},
+        {"name": "authorised_by", "type": "str", "required": true, "note": "must be a real, non-empty human approver name"},
+        {"name": "evidence", "type": "tuple[str, ...]", "required": true},
+        {"name": "timestamp", "type": "float", "auto_generated": true},
+        {"name": "authorisation_evidence_hash", "type": "str", "auto_generated": true}
+      ],
+      "classmethods": [{"name": "authorise(authority, *, authorised_by, evidence: Evidence)", "returns": "HumanAuthorisedTransition", "note": "the one sanctioned constructor"}]
+    },
+    {
+      "name": "request_re_enablement",
+      "module": "vsl_core.governance",
+      "kind": "module-level function (NOT a method on GovernanceAuthority)",
+      "purpose": "The sanctioned path out of a TerminalState. Pairs a new Instance with the HumanAuthorisedTransition record that authorises it.",
+      "signature": "request_re_enablement(instance: Instance, authority: GovernanceAuthority, *, authorised_by: str, evidence: Evidence) -> tuple[Instance, HumanAuthorisedTransition]"
+    },
+    {
+      "name": "Proofing",
+      "module": "vsl_core.governance",
+      "kind": "dataclass (frozen)",
+      "purpose": "Result of an automated verification that a claimed attribute matches an authoritative record. Plain result type -- caller supplies the domain-specific comparison.",
+      "fields": [
+        {"name": "verified", "type": "bool", "required": true},
+        {"name": "verified_against", "type": "str", "required": true},
+        {"name": "verified_at", "type": "float", "auto_generated": true}
+      ]
+    },
+    {
+      "name": "Binding",
+      "module": "vsl_core.governance",
+      "kind": "dataclass (frozen)",
+      "purpose": "Links a verified Proofing to an approved escalation path. Cannot be constructed from an unverified Proofing (raises ValueError).",
+      "fields": [
+        {"name": "proofing", "type": "Proofing", "required": true},
+        {"name": "escalation_path", "type": "str", "required": true},
+        {"name": "bound_at", "type": "float", "auto_generated": true}
+      ]
+    },
+    {
+      "name": "Specification",
+      "module": "vsl_core.governance",
+      "kind": "dataclass (frozen)",
+      "purpose": "Policy-as-Code: a versioned, machine-readable bundle of PreNodes/Invariants/TerminalStates. Requires Proofing + GOV approval before activation.",
+      "fields": [
+        {"name": "name", "type": "str", "required": true},
+        {"name": "version", "type": "str", "required": true},
+        {"name": "approved_by", "type": "GovernanceAuthority", "required": true},
+        {"name": "pre_nodes", "type": "tuple[PreNode, ...]", "default": "()"},
+        {"name": "invariants", "type": "tuple[Invariant, ...]", "default": "()"},
+        {"name": "terminal_states", "type": "tuple[TerminalState, ...]", "default": "()"},
+        {"name": "binding", "type": "Binding | None", "default": null},
+        {"name": "activated_at", "type": "float | None", "default": null}
+      ],
+      "methods": [
+        {"name": "with_binding(binding)", "returns": "Specification"},
+        {"name": "activate()", "returns": "Specification", "note": "raises ValueError if already active or if no Binding attached"}
+      ]
+    },
+    {
+      "name": "VerbaLedger",
+      "module": "vsl_core.ledger",
+      "kind": "class (facade over a LedgerStore)",
+      "purpose": "Hash-chained, append-only audit log.",
+      "constructor": "VerbaLedger(store: LedgerStore | None = None)",
+      "stores": ["InMemoryLedgerStore()", "JsonlLedgerStore(path, fsync=False)"],
+      "methods": [
+        {"name": "write(entry_type, *, identity_key, cluster_key=None, instance_id=None, decision_id=None, caused_by=None, payload=None)", "returns": "LedgerEntry"},
+        {"name": "write_monitor(*, identity_key, drift_detected, cluster_key=None, instance_id=None, decision_id=None, caused_by=None, extra_payload=None)", "returns": "LedgerEntry"},
+        {"name": "write_verification(*, identity_key, result: VerificationResult, cluster_key=None, instance_id=None, decision_id=None, caused_by=None, extra_payload=None)", "returns": "LedgerEntry"},
+        {"name": "verify_integrity()", "returns": "bool", "note": "never raises -- recomputes every entry's hash and chain pointer"},
+        {"name": "audit(*, max_monitor_gap_seconds=None)", "returns": "LedgerAuditReport", "note": "5 named checks; checks 2-5 match causally via caused_by when set, else fall back to identity/instance/timestamp heuristic"},
+        {"name": "issue_certificate(*, max_monitor_gap_seconds=None)", "returns": "VerbaCertificate | None", "note": "returns None if any audit check fails -- never fabricates"},
+        {"name": "current_checkpoint()", "returns": "LedgerCheckpoint | None", "note": "chain's current tip (sequence, entry_hash, checked_at) for external witnessing -- does no anchoring/signing itself"}
+      ],
+      "entry_types": ["MONITOR", "PRE_NODE", "VERIFICATION", "TERMINAL", "SPECIFICATION_UPDATE", "HUMAN_AUTHORISED_TRANSITION", "RE_ENABLEMENT"],
+      "audit_checks": ["no_monitoring_gaps", "drift_flagged_monitor_has_pre_node", "pre_node_has_verification", "insufficient_verification_has_specification_update", "terminal_has_human_authorised_transition"],
+      "important_gotchas": [
+        "decision_id/caused_by are optional -- populate caused_by whenever one identity/instance can have more than one decision in flight at once, or audit() can mismatch an unrelated entry as resolving the wrong one.",
+        "Hash-chaining is tamper-evidence, not cryptographic signing -- it proves an entry wasn't altered after being written, not who wrote it or that the chain wasn't truncated/replaced wholesale. current_checkpoint() is the seam for adding external protection, not the protection itself."
+      ]
+    },
+    {
+      "name": "AssuranceBasis",
+      "module": "vsl_core.metrics",
+      "kind": "dataclass (frozen)",
+      "purpose": "The F1/F2 facts an AssuranceLevel is derived from. Required on PreNode/Invariant/AllowedState -- assurance_level can never be set directly.",
+      "fields": [
+        {"name": "f1_pre_commitment", "type": "bool", "required": true, "note": "does the check run before the action commits?"},
+        {"name": "f2_modification", "type": "F2Modification", "required": true, "note": "how completely does the check modify the actual outcome vs. just touching a prompt/sampling parameter?"}
+      ],
+      "derived_properties": [
+        {"name": "derived_level", "type": "AssuranceLevel", "table": "F1=False -> LOW (any F2). F1=True + FULL -> HIGH. F1=True + PARTIAL/INDIRECT -> MEDIUM. F1=True + NONE -> LOW."}
+      ]
+    },
+    {"name": "F2Modification", "module": "vsl_core.metrics", "kind": "enum", "values": ["FULL", "PARTIAL", "INDIRECT", "NONE"]},
+    {"name": "AssuranceLevel", "module": "vsl_core.metrics", "kind": "enum", "values": ["HIGH", "MEDIUM", "LOW"]},
+    {"name": "VerificationResult", "module": "vsl_core.ledger", "kind": "enum", "values": ["SUFFICIENT", "INSUFFICIENT"]},
+    {
+      "name": "GammaEstimate",
+      "module": "vsl_core.metrics",
+      "kind": "dataclass (frozen)",
+      "purpose": "What a PreNode's monitor callable returns.",
+      "fields": [
+        {"name": "gamma_hat", "type": "float", "required": true},
+        {"name": "delta_estimation_error", "type": "float", "default": 0.0},
+        {"name": "energy_gap_estimate", "type": "float | None", "default": null},
+        {"name": "measured_at", "type": "float", "auto_generated": true}
+      ],
+      "methods": [
+        {"name": "robust_gamma()", "returns": "float"},
+        {"name": "sufficient(threshold=1.1)", "returns": "bool", "note": "this is what a compiled PreNode gate actually checks"}
+      ]
+    },
+    {
+      "name": "VSLAdapter",
+      "module": "vsl_core.conformance.protocol",
+      "kind": "Protocol",
+      "purpose": "The contract a framework-specific adapter must implement to compile PreNode/Invariant objects into real, callable async gates.",
+      "methods": [
+        {"name": "compile_pre_node(pre_node: PreNode)", "returns": "CompiledGate"},
+        {"name": "compile_invariant(invariant: Invariant)", "returns": "CompiledGate"}
+      ],
+      "compiled_gate_shape": "async def gate(candidate_input) -> None -- raises AutomationDeniedException/InvariantViolation on failure, returns normally on pass"
+    },
+    {
+      "name": "PlainPythonReferenceAdapter",
+      "module": "vsl_core.conformance.reference_adapter",
+      "kind": "class implementing VSLAdapter",
+      "purpose": "The default adapter when no framework-specific one exists or is needed -- direct Python calls, zero framework underneath."
+    },
+    {
+      "name": "run_conformance_suite",
+      "module": "vsl_core.conformance.suite",
+      "kind": "function",
+      "signature": "run_conformance_suite(adapter: VSLAdapter) -> list[str]",
+      "purpose": "Mechanically proves an adapter blocks-before-side-effect, passes-through-when-sufficient, raises the specific InvariantViolation type, and is safely reusable. Empty list == conformant."
+    }
+  ],
+
+  "decision_heuristic": {
+    "purpose": "How to find governance decision points in an arbitrary agent, before knowing which primitive to reach for.",
+    "signals": [
+      {
+        "signal": "A side effect on an external system (payment, email send, database write, infra change -- anything not purely in-memory)",
+        "primitive": "PreNode (sometimes Invariant if it must never be bypassed regardless of context)",
+        "rationale": "Gate the action before it fires, checked against a monitor's GammaEstimate."
+      },
+      {
+        "signal": "An irreversibility boundary (delete, refund, transfer -- anything that can't be cleanly undone)",
+        "primitive": "Invariant",
+        "rationale": "These tend to be the 'cannot be bypassed' cases -- always-on, not context-dependent gating."
+      },
+      {
+        "signal": "A point where untrusted input could redirect what the agent does next (a tool's return value, retrieved content, another agent's message)",
+        "primitive": "PreNode gating the next action (not the input itself)",
+        "rationale": "vsl-core does not sanitize input -- it gates what happens after, so the PreNode's monitor should check the proposed next action against the declared scope."
+      },
+      {
+        "signal": "A scope/permission escalation (the agent about to act outside what was declared for this task)",
+        "primitive": "Invariant, often paired with Identity (IdentityKey/Instance) and Cluster if multiple agents are involved",
+        "rationale": "Escalation is usually a hard 'never' rule, and identity scoping is what makes 'declared for this task' checkable at all."
+      }
+    ],
+    "when_the_use_case_is_vague": "If the risky/irreversible actions in the stated use case aren't obvious from a one-line prompt, ask 1-2 clarifying questions about what's genuinely external-facing or irreversible in that domain before constructing anything. Do not guess and silently assume."
+  },
+
+  "canonical_patterns": [
+    {
+      "id": "A",
+      "name": "Gate a high-impact action before it runs",
+      "code": "from vsl_core.constructs import PreNode, Fallback\nfrom vsl_core.metrics import AssuranceBasis, F2Modification, GammaEstimate\n\nALLOWED_TOOLS = {\"lookup_order\", \"issue_refund_under_50\"}\n\nasync def within_declared_scope(candidate_action) -> GammaEstimate:\n    ok = candidate_action.tool_name in ALLOWED_TOOLS\n    return GammaEstimate(gamma_hat=2.0 if ok else 0.1)\n\ntool_call_gate = PreNode(\n    name=\"tool_call_gate\",\n    description=\"A tool call only proceeds if it's within this agent's declared scope\",\n    monitor=within_declared_scope,\n    assurance_basis=AssuranceBasis(f1_pre_commitment=True, f2_modification=F2Modification.FULL),\n    fallback=Fallback(max_retries=1, on_max_retries=\"AUTOMATION_DENIED\"),\n)"
+    },
+    {
+      "id": "B",
+      "name": "A hard rule that can't be bypassed, with an escalation path",
+      "code": "from vsl_core.constructs import Invariant, TerminalState\nfrom vsl_core.metrics import AssuranceBasis, F2Modification\n\ngovernance_halt = TerminalState(\n    name=\"governance_halt\",\n    description=\"Halts pending human review after a hard rule is violated\",\n    entry_conditions=(\"invariant_violated\",),\n)\n\nasync def payment_is_verified(candidate) -> bool:\n    return candidate.customer.payment_verified is True\n\npayment_required = Invariant(\n    name=\"payment_required\",\n    description=\"Never confirm a booking without a verified payment method\",\n    rule=payment_is_verified,\n    assurance_basis=AssuranceBasis(f1_pre_commitment=True, f2_modification=F2Modification.FULL),\n    on_violation=governance_halt,\n)"
+    },
+    {
+      "id": "C",
+      "name": "Identity scoping and a human-authorised way back into operation",
+      "code": "from vsl_core.identity import Evidence\nfrom vsl_core.governance import GovernanceAuthority, request_re_enablement\n\nrisk_committee = GovernanceAuthority(name=\"Risk Committee\", escalation_contact=\"risk@example.com\")\n\nevidence = Evidence(\n    root_cause_analysis=\"Booking gate blocked all candidates; provider cache was stale.\",\n    specification_update_proposal=\"Refresh the provider cache every 5 minutes instead of hourly.\",\n)\n\nnew_instance, transition = request_re_enablement(\n    suspended_instance,\n    risk_committee,\n    authorised_by=\"j.smith\",\n    evidence=evidence,\n)\n# Both the new Instance and the HumanAuthorisedTransition record exist together --\n# a caller can't get one without the other."
+    },
+    {
+      "id": "D",
+      "name": "A tamper-evident, auditable record of what happened",
+      "code": "from vsl_core.ledger import VerbaLedger, VerificationResult\n\nledger = VerbaLedger()\nledger.write_monitor(identity_key=str(agent_identity), drift_detected=False)\nledger.write_verification(identity_key=str(agent_identity), result=VerificationResult.SUFFICIENT)\n\nreport = ledger.audit()\ncertificate = ledger.issue_certificate()  # None if any of the 5 audit checks fail -- never fabricated"
+    },
+    {
+      "id": "E",
+      "name": "Multi-agent aggregation that can't silently omit a member",
+      "code": "from vsl_core.cluster import Cluster\nfrom vsl_core.identity import IdentityKey, ClusterKey\n\nagents = (IdentityKey.generate(\"booking\"), IdentityKey.generate(\"payments\"))\ncluster_key = ClusterKey.from_constituents(agents)\n\ncheckout_cluster = Cluster(name=\"checkout_flow\", cluster_key=cluster_key, constituents=agents)\n# Constructing a Cluster whose constituents aren't covered by its own cluster_key\n# raises ValueError immediately."
+    }
+  ],
+
+  "lifecycle": {
+    "steps": [
+      "1. Identify decision points using the decision_heuristic (ask clarifying questions if the use case is vague).",
+      "2. Construct PreNode/Invariant/TerminalState/Cluster objects -- pure data plus callables, nothing is live yet.",
+      "3. Compile them into callable gates via an adapter conforming to VSLAdapter (PlainPythonReferenceAdapter unless a specific framework adapter is named).",
+      "4. Call the compiled gate immediately before the real action. It raises on failure, returns normally on pass.",
+      "5. Write what happened to a VerbaLedger (write_monitor/write_verification/write) -- this is never automatic.",
+      "6. Periodically call audit()/issue_certificate() for a compliance-shaped report.",
+      "7. If a TerminalState/Invariant.on_violation fires, the only sanctioned way back is governance.request_re_enablement()."
+    ],
+    "automatic_vs_manual": {
+      "automatic": [
+        "The compiled gate raising AutomationDeniedException/InvariantViolation when its check fails.",
+        "The hash chain updating and verify_integrity() detecting tampering.",
+        "audit()'s 5 checks running against whatever entries exist.",
+        "issue_certificate() refusing to fabricate a certificate on a failed audit."
+      ],
+      "manual_the_developer_must_write": [
+        "Catching the raised exception -- vsl-core does not catch it for you.",
+        "Writing the TERMINAL ledger entry when a TerminalState is entered.",
+        "Actually halting further execution -- there is no running 'current state' object that gets flipped; the calling code decides what happens next.",
+        "Calling request_re_enablement() and writing the resulting RE_ENABLEMENT/HUMAN_AUTHORISED_TRANSITION entries.",
+        "Populating decision_id/caused_by when more than one decision can be in flight per identity/instance."
+      ]
+    }
+  },
+
+  "generic_scaffold": {
+    "purpose": "The repeatable project structure for wiring vsl-core into a new, arbitrary use case. Domain-agnostic -- substitute the real nouns/actions of whatever use case is stated.",
+    "files": [
+      {"file": "domain.py", "contains": "Plain dataclasses modeling the domain's entities and their states (e.g. Customer, Order, ProviderStatus)."},
+      {"file": "tools.py", "contains": "The actual functions that perform side-effecting actions -- the 'controlled tools' this domain needs (e.g. issue_refund, send_email, book_appointment)."},
+      {"file": "governance.py", "contains": "Constructs the PreNode/Invariant/TerminalState/InadmissibleState/Cluster objects for this domain, one per decision point identified via decision_heuristic. This is where AssuranceBasis is justified for each construct -- not defaulted."},
+      {"file": "agent.py", "contains": "Orchestrates the flow: decide what to do -> compile gates via an adapter -> call gates before each tools.py action -> write ledger entries -> catch exceptions and handle TerminalState/re-enablement."},
+      {"file": "tests/", "contains": "Prove the governance shape: each PreNode/Invariant actually blocks the case it should and passes the case it shouldn't, using PlainPythonReferenceAdapter directly."}
+    ],
+    "procedure_for_an_ai_following_this": [
+      "If the risky/irreversible actions in the stated use case aren't obvious, ask before guessing.",
+      "List the domain's key actions and classify each via decision_heuristic.signals.",
+      "Write domain.py.",
+      "Write tools.py.",
+      "Write governance.py, justifying each AssuranceBasis with real F1/F2 facts, not a default HIGH.",
+      "Write agent.py wiring PlainPythonReferenceAdapter (or a named framework adapter) + VerbaLedger + explicit exception handling per lifecycle.automatic_vs_manual.",
+      "Write tests proving each gate blocks/passes correctly.",
+      "State plainly which of this document's canonical_patterns each part of the generated code corresponds to, so the developer can verify it against this reference."
+    ]
+  },
+
+  "common_mistakes": [
+    "Setting assurance_level directly instead of deriving it from AssuranceBasis -- raises TypeError, it's a read-only property.",
+    "Assuming a TerminalState or ledger write happens automatically when a gate raises -- it doesn't; the calling code must catch the exception and write the entry itself.",
+    "Reusing one Instance across multiple concurrent decisions without decision_id/caused_by -- can make audit() mismatch an unrelated entry as resolving the wrong one.",
+    "Treating the Drift Class catalog (vsl_core.catalog) as an active scanner -- it's a reference taxonomy a monitor/rule function can consult, not executable detection logic on its own.",
+    "Calling Instance.re_enable() directly instead of governance.request_re_enablement() -- bypasses the authority/evidence audit trail.",
+    "Describing VerbaLedger's hash chain as a cryptographic signature or proof of non-repudiation -- it's tamper-evidence (detects change after the fact), not identity-bound signing.",
+    "Claiming HIGH assurance for a mechanism that only touches a prompt or sampling parameter behind a hosted API -- that caps at MEDIUM (F1=True, F2=PARTIAL)."
+  ]
+}
