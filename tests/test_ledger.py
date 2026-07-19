@@ -6,6 +6,7 @@ from vsl_core.exceptions import LedgerIntegrityError
 from vsl_core.ledger import (
     DRIFT_DETECTED_KEY,
     HUMAN_AUTHORISED_TRANSITION,
+    LEDGER_SCHEMA_VERSION,
     RE_ENABLEMENT,
     VERIFICATION_RESULT_KEY,
     GENESIS_HASH,
@@ -235,3 +236,248 @@ def test_audit_still_supports_raw_literal_payload_keys_for_backward_compat():
     ledger.write(LedgerEntryType.VERIFICATION, identity_key="sys-1", payload={"result": "INSUFFICIENT"})
     report = ledger.audit()
     assert "insufficient_verification_has_specification_update" in report.checks_failed
+
+
+def test_audit_without_caused_by_can_false_pass_on_interleaved_decisions():
+    # Documents a real limitation of the timestamp-based fallback, not a
+    # desired behavior: two unrelated decisions on the same identity/
+    # instance can be confused. A drift-flagged MONITOR for "payment" is
+    # followed by an unrelated PRE_NODE for "email" -- without caused_by,
+    # check2 can't tell them apart and incorrectly reports the payment
+    # drift as resolved. The next test proves caused_by fixes exactly this.
+    ledger = VerbaLedger()
+    ledger.write_monitor(
+        identity_key="sys-1", instance_id="inst-1", drift_detected=True, extra_payload={"decision": "payment"}
+    )
+    ledger.write(LedgerEntryType.PRE_NODE, identity_key="sys-1", instance_id="inst-1", payload={"decision": "email"})
+
+    report = ledger.audit()
+    assert "drift_flagged_monitor_has_pre_node" not in report.checks_failed
+
+
+def test_audit_with_caused_by_correctly_catches_interleaved_decision_violation():
+    ledger = VerbaLedger()
+    payment_monitor = ledger.write_monitor(
+        identity_key="sys-1", instance_id="inst-1", drift_detected=True, extra_payload={"decision": "payment"}
+    )
+    # An unrelated PRE_NODE for a different decision, explicitly marked as
+    # caused by something other than the payment monitor.
+    ledger.write(
+        LedgerEntryType.PRE_NODE,
+        identity_key="sys-1",
+        instance_id="inst-1",
+        caused_by="some-other-monitor-entry-id",
+        payload={"decision": "email"},
+    )
+
+    report = ledger.audit()
+    assert "drift_flagged_monitor_has_pre_node" in report.checks_failed
+    assert payment_monitor.entry_id in report.violations["drift_flagged_monitor_has_pre_node"]
+
+
+def test_audit_with_caused_by_correctly_resolves_the_right_decision():
+    ledger = VerbaLedger()
+    payment_monitor = ledger.write_monitor(
+        identity_key="sys-1", instance_id="inst-1", drift_detected=True, extra_payload={"decision": "payment"}
+    )
+    ledger.write(
+        LedgerEntryType.PRE_NODE,
+        identity_key="sys-1",
+        instance_id="inst-1",
+        caused_by=payment_monitor.entry_id,
+        payload={"decision": "payment"},
+    )
+    # An unrelated interleaved decision, correctly not confused with the above.
+    ledger.write(
+        LedgerEntryType.PRE_NODE,
+        identity_key="sys-1",
+        instance_id="inst-1",
+        caused_by="some-other-monitor-entry-id",
+        payload={"decision": "email"},
+    )
+
+    report = ledger.audit()
+    assert "drift_flagged_monitor_has_pre_node" not in report.checks_failed
+
+
+def test_tamper_detection_catches_decision_id_mutation(tmp_path):
+    path = tmp_path / "ledger.jsonl"
+    ledger = VerbaLedger(JsonlLedgerStore(path))
+    ledger.write_monitor(
+        identity_key="sys-1", instance_id="inst-1", drift_detected=True, decision_id="DECISION_MARKER_VALUE"
+    )
+
+    untouched = VerbaLedger(JsonlLedgerStore(path))
+    assert untouched.verify_integrity() is True
+
+    raw = path.read_bytes()
+    assert b"DECISION_MARKER_VALUE" in raw
+    tampered = raw.replace(b"DECISION_MARKER_VALUE", b"DECISION_MARKER_VALUX", 1)
+    assert tampered != raw
+    assert len(tampered) == len(raw)
+    path.write_bytes(tampered)
+
+    reopened = VerbaLedger(JsonlLedgerStore(path))
+    assert reopened.verify_integrity() is False
+
+
+def test_tamper_detection_catches_caused_by_mutation(tmp_path):
+    path = tmp_path / "ledger.jsonl"
+    ledger = VerbaLedger(JsonlLedgerStore(path))
+    ledger.write_monitor(identity_key="sys-1", instance_id="inst-1", drift_detected=True)
+    ledger.write(
+        LedgerEntryType.PRE_NODE,
+        identity_key="sys-1",
+        instance_id="inst-1",
+        caused_by="CAUSED_BY_MARKER_VALUE",
+        payload={},
+    )
+
+    untouched = VerbaLedger(JsonlLedgerStore(path))
+    assert untouched.verify_integrity() is True
+
+    raw = path.read_bytes()
+    assert b"CAUSED_BY_MARKER_VALUE" in raw
+    tampered = raw.replace(b"CAUSED_BY_MARKER_VALUE", b"CAUSED_BY_MARKER_VALUX", 1)
+    assert tampered != raw
+    assert len(tampered) == len(raw)
+    path.write_bytes(tampered)
+
+    reopened = VerbaLedger(JsonlLedgerStore(path))
+    assert reopened.verify_integrity() is False
+
+
+def test_from_dict_defaults_missing_causal_fields_to_none():
+    # Simulates loading an entry persisted before decision_id/caused_by
+    # existed -- must not raise a KeyError, and must default cleanly.
+    from vsl_core.ledger import LedgerEntry
+
+    legacy_data = {
+        "entry_id": "e1",
+        "sequence": 0,
+        "entry_type": "MONITOR",
+        "identity_key": "sys-1",
+        "cluster_key": None,
+        "instance_id": None,
+        "payload": {},
+        "timestamp": 0.0,
+        "prev_hash": GENESIS_HASH,
+        "entry_hash": "irrelevant-for-this-test",
+    }
+    entry = LedgerEntry.from_dict(legacy_data)
+    assert entry.decision_id is None
+    assert entry.caused_by is None
+
+
+def test_decision_id_and_caused_by_round_trip_through_jsonl(tmp_path):
+    path = tmp_path / "ledger.jsonl"
+    ledger = VerbaLedger(JsonlLedgerStore(path))
+    monitor = ledger.write_monitor(
+        identity_key="sys-1", instance_id="inst-1", drift_detected=True, decision_id="dec-1"
+    )
+    ledger.write(
+        LedgerEntryType.PRE_NODE,
+        identity_key="sys-1",
+        instance_id="inst-1",
+        decision_id="dec-1",
+        caused_by=monitor.entry_id,
+        payload={},
+    )
+
+    reopened = VerbaLedger(JsonlLedgerStore(path))
+    entries = list(reopened.store.all_entries())
+    assert entries[0].decision_id == "dec-1"
+    assert entries[1].decision_id == "dec-1"
+    assert entries[1].caused_by == monitor.entry_id
+    assert reopened.verify_integrity() is True
+
+
+def test_write_stamps_current_schema_version():
+    ledger = VerbaLedger()
+    entry = ledger.write(LedgerEntryType.MONITOR, identity_key="sys-1", payload={})
+    assert entry.schema_version == LEDGER_SCHEMA_VERSION
+
+
+def test_bare_ledger_entry_construction_does_not_assume_a_schema_version():
+    # A LedgerEntry built directly (not through VerbaLedger.write()) should
+    # not silently claim the current schema version -- only write() stamps
+    # it, so a bare construction (e.g. reconstructing a legacy entry) stays
+    # honest about not actually knowing which version it was written under.
+    from vsl_core.ledger import LedgerEntry
+
+    entry = LedgerEntry(entry_type=LedgerEntryType.MONITOR, identity_key="sys-1")
+    assert entry.schema_version is None
+
+
+def test_tamper_detection_catches_schema_version_mutation(tmp_path):
+    import json
+
+    path = tmp_path / "ledger.jsonl"
+    ledger = VerbaLedger(JsonlLedgerStore(path))
+    ledger.write(LedgerEntryType.MONITOR, identity_key="sys-1", payload={})
+
+    untouched = VerbaLedger(JsonlLedgerStore(path))
+    assert untouched.verify_integrity() is True
+
+    lines = path.read_text(encoding="utf-8").splitlines()
+    data = json.loads(lines[0])
+    assert data["schema_version"] == LEDGER_SCHEMA_VERSION
+    data["schema_version"] = "9.9"
+    lines[0] = json.dumps(data, sort_keys=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    reopened = VerbaLedger(JsonlLedgerStore(path))
+    assert reopened.verify_integrity() is False
+
+
+def test_current_checkpoint_none_on_empty_ledger():
+    ledger = VerbaLedger()
+    assert ledger.current_checkpoint() is None
+
+
+def test_current_checkpoint_matches_last_entry_and_updates_on_new_writes():
+    ledger = VerbaLedger()
+    e1 = ledger.write(LedgerEntryType.MONITOR, identity_key="sys-1", payload={})
+    cp1 = ledger.current_checkpoint()
+    assert cp1 is not None
+    assert cp1.sequence == e1.sequence
+    assert cp1.entry_hash == e1.entry_hash
+
+    e2 = ledger.write(LedgerEntryType.MONITOR, identity_key="sys-1", payload={})
+    cp2 = ledger.current_checkpoint()
+    assert cp2.sequence == e2.sequence
+    assert cp2.entry_hash == e2.entry_hash
+    assert cp2.sequence != cp1.sequence
+    assert cp2.entry_hash != cp1.entry_hash
+
+
+def test_jsonl_store_is_safe_under_concurrent_writers_from_separate_instances(tmp_path):
+    # Each worker builds its OWN JsonlLedgerStore pointed at the same file --
+    # exactly the shape of race that a threading.RLock scoped to one Python
+    # object cannot prevent, and that _CrossProcessFileLock now closes.
+    # Before that lock existed, this was a real, reproducible way to corrupt
+    # the chain (duplicate/skipped sequence numbers from two writers reading
+    # the same last_entry() before either appended).
+    import concurrent.futures
+
+    path = tmp_path / "ledger.jsonl"
+    writes_per_worker = 25
+    workers = 4
+
+    def write_many(worker_id: int) -> None:
+        ledger = VerbaLedger(JsonlLedgerStore(path))
+        for _ in range(writes_per_worker):
+            ledger.write_monitor(identity_key=f"worker-{worker_id}", drift_detected=False)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(write_many, w) for w in range(workers)]
+        for f in futures:
+            f.result()
+
+    final = VerbaLedger(JsonlLedgerStore(path))
+    entries = list(final.store.all_entries())
+    assert len(entries) == writes_per_worker * workers
+    assert final.verify_integrity() is True
+    # Sequence numbers must be a contiguous 0..N-1 run with no duplicates or
+    # gaps -- exactly what a lost race would corrupt.
+    assert sorted(e.sequence for e in entries) == list(range(writes_per_worker * workers))

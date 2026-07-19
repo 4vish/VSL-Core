@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import threading
 import time
 import uuid
@@ -30,7 +31,20 @@ from typing import Any, ClassVar, Iterator, Protocol
 
 from .exceptions import LedgerIntegrityError
 
+if sys.platform == "win32":
+    import msvcrt
+else:
+    import fcntl
+
 GENESIS_HASH: str = "0" * 64
+
+# The current shape/version of LedgerEntry's recorded fields. Bump this
+# whenever a field is added, removed, or reinterpreted, so an entry is
+# self-describing about which format it was written under rather than
+# leaving a reader to guess from which fields happen to be present. Entries
+# persisted before this field existed load with schema_version=None (see
+# LedgerEntry.from_dict) -- that absence is itself meaningful, not a bug.
+LEDGER_SCHEMA_VERSION: str = "1.0"
 
 
 class LedgerEntryType(str, Enum):
@@ -85,12 +99,37 @@ class LedgerEntry:
     LedgerStore's append() method, not by the caller -- a caller cannot
     lie about an entry's position in the chain. Until sealed by a store,
     a freshly constructed LedgerEntry has sequence=-1 and empty hashes.
+
+    `decision_id`/`caused_by` are optional causal-correlation fields, not
+    part of the source spec. Without them, audit()'s cross-referencing
+    checks can only match entries by "same identity_key/instance_id and a
+    later timestamp" -- which silently mismatches when a single Instance
+    has more than one decision in flight at once (e.g. a payment check and
+    an email verification interleaved on the same agent). `caused_by` lets
+    an entry name the exact prior entry_id it resolves, so audit() can
+    match causally instead of guessing from timing; `decision_id` is purely
+    descriptive grouping metadata for querying/display and is not itself
+    read by any audit check. Both are optional and default to None so
+    existing single-decision-at-a-time callers are unaffected -- audit()
+    falls back to the old timestamp-based heuristic whenever caused_by is
+    unset.
+
+    `schema_version` records which shape of LedgerEntry wrote this entry
+    (see LEDGER_SCHEMA_VERSION). It defaults to None here deliberately --
+    VerbaLedger.write() is what stamps the current constant onto every
+    entry it constructs; a bare LedgerEntry(...) built directly (e.g. in a
+    test, or by from_dict() reconstructing a legacy entry with no recorded
+    version) should not silently claim a version it wasn't actually written
+    under.
     """
 
     entry_type: LedgerEntryType
     identity_key: str
     cluster_key: str | None = None
     instance_id: str | None = None
+    decision_id: str | None = None
+    caused_by: str | None = None
+    schema_version: str | None = None
     payload: dict[str, Any] = field(default_factory=dict)
     timestamp: float = field(default_factory=time.time)
     entry_id: str = ""
@@ -110,6 +149,9 @@ class LedgerEntry:
             "identity_key": self.identity_key,
             "cluster_key": self.cluster_key,
             "instance_id": self.instance_id,
+            "decision_id": self.decision_id,
+            "caused_by": self.caused_by,
+            "schema_version": self.schema_version,
             "payload": self.payload,
             "timestamp": self.timestamp,
             "prev_hash": self.prev_hash,
@@ -124,12 +166,18 @@ class LedgerEntry:
         be able to load and inspect a corrupted chain in order to diagnose
         it. Recomputation-and-comparison is verify_integrity()'s job, not
         this constructor's.
+
+        `.get()` on decision_id/caused_by/schema_version so entries
+        persisted before these fields existed still load cleanly, as None.
         """
         return cls(
             entry_type=LedgerEntryType(data["entry_type"]),
             identity_key=data["identity_key"],
             cluster_key=data.get("cluster_key"),
             instance_id=data.get("instance_id"),
+            decision_id=data.get("decision_id"),
+            caused_by=data.get("caused_by"),
+            schema_version=data.get("schema_version"),
             payload=data.get("payload", {}),
             timestamp=data["timestamp"],
             entry_id=data["entry_id"],
@@ -153,12 +201,42 @@ def _compute_entry_hash(entry: LedgerEntry) -> str:
         "identity_key": entry.identity_key,
         "cluster_key": entry.cluster_key,
         "instance_id": entry.instance_id,
+        "decision_id": entry.decision_id,
+        "caused_by": entry.caused_by,
+        "schema_version": entry.schema_version,
         "payload": entry.payload,
         "timestamp": entry.timestamp,
         "prev_hash": entry.prev_hash,
     }
     blob = json.dumps(canonical, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def _causally_resolves(candidate: LedgerEntry, source: LedgerEntry, *, check_instance: bool) -> bool:
+    """True if `candidate` counts as resolving `source` in an audit check.
+
+    If `candidate.caused_by` is set, it must reference `source.entry_id`
+    exactly -- an explicit causal claim is authoritative and overrides the
+    fallback heuristic below, even when timestamps/identity/instance would
+    otherwise coincidentally match a *different*, unrelated entry. This is
+    what closes the false-pass gap: once a candidate declares its real
+    cause, it stops being available to satisfy an unrelated check just
+    because it happens to share an identity/instance and come later.
+
+    If `candidate.caused_by` is unset, falls back to the pre-existing
+    timestamp + identity_key (+ instance_id, when check_instance) heuristic,
+    so callers that don't populate the causal fields see unchanged
+    behavior.
+    """
+    if candidate.caused_by is not None:
+        return candidate.caused_by == source.entry_id
+    if candidate.timestamp < source.timestamp:
+        return False
+    if candidate.identity_key != source.identity_key:
+        return False
+    if check_instance and candidate.instance_id != source.instance_id:
+        return False
+    return True
 
 
 def _seal(entry: LedgerEntry, sequence: int, prev_hash: str) -> LedgerEntry:
@@ -168,6 +246,66 @@ def _seal(entry: LedgerEntry, sequence: int, prev_hash: str) -> LedgerEntry:
     """
     positioned = replace(entry, sequence=sequence, prev_hash=prev_hash)
     return replace(positioned, entry_hash=_compute_entry_hash(positioned))
+
+
+class _CrossProcessFileLock:
+    """An OS-level advisory lock on a sibling `.lock` file, held for the
+    duration of a `with` block.
+
+    JsonlLedgerStore's own `threading.RLock` only protects concurrent
+    writers that share the same Python object -- it does nothing for two
+    separate `JsonlLedgerStore` instances (in one process or several)
+    pointed at the same file, which can otherwise race: both read the same
+    `last_entry()` before either appends, both compute the same sequence/
+    prev_hash, and both write, corrupting the chain. This lock closes that
+    gap by making the read-last-entry-then-append sequence mutually
+    exclusive across every writer of the file, not just within one object.
+
+    Uses `fcntl.flock` (POSIX) / `msvcrt.locking` (Windows) rather than a
+    plain `O_CREAT|O_EXCL` lockfile mutex on purpose: both are tied to the
+    open file descriptor's lifetime, so the OS releases the lock
+    automatically if the holding process dies mid-write, instead of
+    leaving a stale lock file that blocks every future writer forever.
+    """
+
+    def __init__(self, path: Path) -> None:
+        self._lock_path = path.with_name(path.name + ".lock")
+        self._file = None
+
+    def __enter__(self) -> "_CrossProcessFileLock":
+        if sys.platform == "win32":
+            # msvcrt.locking locks a real byte range starting at the
+            # current file position -- the file needs that byte to exist
+            # before any lock is attempted. Ensuring that via a separate,
+            # short-lived handle (not the one we go on to lock) matters:
+            # Windows' byte-range locks are mandatory, not advisory, so a
+            # *read* of an already-locked byte from another handle raises
+            # PermissionError immediately rather than blocking like POSIX
+            # advisory locks do. Checking existence/size via stat() only
+            # touches filesystem metadata, never the locked byte range, so
+            # it can't collide with a lock another thread/process holds.
+            if not self._lock_path.exists() or self._lock_path.stat().st_size == 0:
+                with open(self._lock_path, "ab") as touch:
+                    touch.write(b"\0")
+                    touch.flush()
+            self._file = open(self._lock_path, "r+b")
+            self._file.seek(0)
+            msvcrt.locking(self._file.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            self._file = open(self._lock_path, "a+b")
+            fcntl.flock(self._file.fileno(), fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        if self._file is None:
+            return
+        if sys.platform == "win32":
+            self._file.seek(0)
+            msvcrt.locking(self._file.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            fcntl.flock(self._file.fileno(), fcntl.LOCK_UN)
+        self._file.close()
+        self._file = None
 
 
 class LedgerStore(Protocol):
@@ -218,6 +356,15 @@ class JsonlLedgerStore:
 
     fsync defaults to False for test speed; production use should pass
     fsync=True so a write survives a crash immediately after it returns.
+
+    `self._lock` (a `threading.RLock`) only ever protected concurrent
+    writers sharing this exact Python object -- it did nothing for two
+    separate `JsonlLedgerStore` instances pointed at the same file, which
+    is an entirely ordinary situation across processes (and even across
+    threads that each construct their own store). `append()` now also
+    holds a `_CrossProcessFileLock` on a sibling `.lock` file for its whole
+    read-last-entry-then-write critical section, so that race is closed
+    for real, not just documented.
     """
 
     def __init__(self, path: Path | str, *, fsync: bool = False) -> None:
@@ -248,7 +395,7 @@ class JsonlLedgerStore:
         return last
 
     def append(self, entry: LedgerEntry) -> LedgerEntry:
-        with self._lock:
+        with self._lock, _CrossProcessFileLock(self.path):
             last = self.last_entry()
             sequence = 0 if last is None else last.sequence + 1
             prev_hash = GENESIS_HASH if last is None else last.entry_hash
@@ -274,6 +421,31 @@ class LedgerAuditReport:
     @property
     def all_passed(self) -> bool:
         return not self.checks_failed
+
+
+@dataclass(frozen=True)
+class LedgerCheckpoint:
+    """The chain's current tip: just enough for an external party to
+    independently witness that the chain hasn't been rolled back or
+    replaced wholesale, without vsl-core itself doing any anchoring,
+    signing, or networking.
+
+    `verify_integrity()` only proves internal consistency of whatever
+    entries the store currently holds -- it can't detect truncation
+    (deleting the last N entries) or wholesale replacement with an older,
+    still-internally-consistent snapshot, because a shortened or replaced
+    chain is still a valid chain on its own terms. An external anchor that
+    records this checkpoint's (sequence, entry_hash) at intervals, outside
+    the operator's control, is what closes that gap: a later checkpoint
+    with a lower sequence, or the same sequence with a different hash,
+    proves the local chain was altered after the fact. vsl-core deliberately
+    stops at exposing this value -- storing it externally, signing it, or
+    comparing it over time is a different system's job.
+    """
+
+    sequence: int
+    entry_hash: str
+    checked_at: float
 
 
 @dataclass(frozen=True)
@@ -343,6 +515,8 @@ class VerbaLedger:
         identity_key: str,
         cluster_key: str | None = None,
         instance_id: str | None = None,
+        decision_id: str | None = None,
+        caused_by: str | None = None,
         payload: dict[str, Any] | None = None,
     ) -> LedgerEntry:
         last = self.store.last_entry()
@@ -358,6 +532,9 @@ class VerbaLedger:
             identity_key=identity_key,
             cluster_key=cluster_key,
             instance_id=instance_id,
+            decision_id=decision_id,
+            caused_by=caused_by,
+            schema_version=LEDGER_SCHEMA_VERSION,
             payload=payload or {},
         )
         return self.store.append(draft)
@@ -369,6 +546,8 @@ class VerbaLedger:
         drift_detected: bool,
         cluster_key: str | None = None,
         instance_id: str | None = None,
+        decision_id: str | None = None,
+        caused_by: str | None = None,
         extra_payload: dict[str, Any] | None = None,
     ) -> LedgerEntry:
         """Write a MONITOR entry with a correctly-keyed drift_detected
@@ -382,6 +561,8 @@ class VerbaLedger:
             identity_key=identity_key,
             cluster_key=cluster_key,
             instance_id=instance_id,
+            decision_id=decision_id,
+            caused_by=caused_by,
             payload=payload,
         )
 
@@ -392,6 +573,8 @@ class VerbaLedger:
         result: VerificationResult,
         cluster_key: str | None = None,
         instance_id: str | None = None,
+        decision_id: str | None = None,
+        caused_by: str | None = None,
         extra_payload: dict[str, Any] | None = None,
     ) -> LedgerEntry:
         """Write a VERIFICATION entry with a correctly-keyed result payload
@@ -404,8 +587,23 @@ class VerbaLedger:
             identity_key=identity_key,
             cluster_key=cluster_key,
             instance_id=instance_id,
+            decision_id=decision_id,
+            caused_by=caused_by,
             payload=payload,
         )
+
+    def current_checkpoint(self) -> LedgerCheckpoint | None:
+        """Return the chain's current tip, or None for an empty ledger.
+
+        This is the one fact an external anchoring service would need to
+        witness the chain independently over time (see LedgerCheckpoint) --
+        vsl-core exposes the value and stops there; it does not sign,
+        transmit, or store it anywhere itself.
+        """
+        last = self.store.last_entry()
+        if last is None:
+            return None
+        return LedgerCheckpoint(sequence=last.sequence, entry_hash=last.entry_hash, checked_at=time.time())
 
     def verify_integrity(self) -> bool:
         """Recompute every entry's hash and chain pointer. Never raises --
@@ -434,6 +632,17 @@ class VerbaLedger:
         continuous-background by drift class, so the caller must supply a
         domain-appropriate value. Passing None skips check 1 entirely
         (reported as passed, since no gap threshold was asked for).
+
+        Checks 2-5 match causally via `caused_by` whenever a candidate
+        entry sets it (see `_causally_resolves`), falling back to the
+        original same-identity/instance-and-later-timestamp heuristic only
+        when it's unset. Without `caused_by`, two unrelated decisions
+        overlapping on the same identity/instance can be mismatched -- e.g.
+        an unrelated PRE_NODE that merely happens to come after a
+        drift-flagged MONITOR can look like it resolves that MONITOR. This
+        is a real limitation of the fallback path, not a fabricated one:
+        populate `caused_by` on every write once more than one decision can
+        be in flight at a time for the same identity/instance.
         """
         entries = list(self.store.all_entries())
         violations: dict[str, list[str]] = {}
@@ -454,12 +663,7 @@ class VerbaLedger:
             m.entry_id
             for m in monitor_entries
             if m.payload.get(DRIFT_DETECTED_KEY)
-            and not any(
-                pn.timestamp >= m.timestamp
-                and pn.identity_key == m.identity_key
-                and pn.instance_id == m.instance_id
-                for pn in pre_node_entries
-            )
+            and not any(_causally_resolves(pn, m, check_instance=True) for pn in pre_node_entries)
         ]
         if check2:
             violations["drift_flagged_monitor_has_pre_node"] = check2
@@ -468,12 +672,7 @@ class VerbaLedger:
         check3 = [
             pn.entry_id
             for pn in pre_node_entries
-            if not any(
-                v.timestamp >= pn.timestamp
-                and v.identity_key == pn.identity_key
-                and v.instance_id == pn.instance_id
-                for v in verification_entries
-            )
+            if not any(_causally_resolves(v, pn, check_instance=True) for v in verification_entries)
         ]
         if check3:
             violations["pre_node_has_verification"] = check3
@@ -483,7 +682,7 @@ class VerbaLedger:
             v.entry_id
             for v in verification_entries
             if v.payload.get(VERIFICATION_RESULT_KEY) == VerificationResult.INSUFFICIENT.value
-            and not any(s.timestamp >= v.timestamp and s.identity_key == v.identity_key for s in spec_update_entries)
+            and not any(_causally_resolves(s, v, check_instance=False) for s in spec_update_entries)
         ]
         if check4:
             violations["insufficient_verification_has_specification_update"] = check4
@@ -493,7 +692,7 @@ class VerbaLedger:
         check5 = [
             t.entry_id
             for t in terminal_entries
-            if not any(h.timestamp >= t.timestamp and h.identity_key == t.identity_key for h in hat_entries)
+            if not any(_causally_resolves(h, t, check_instance=False) for h in hat_entries)
         ]
         if check5:
             violations["terminal_has_human_authorised_transition"] = check5
