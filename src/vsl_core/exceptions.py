@@ -46,9 +46,25 @@ class InvariantViolation(AutomationDeniedException):
     callers that need to distinguish "no Fallback path, straight to
     Terminal" (the Invariant case) from an ordinary Pre-Node Fallback
     exhaustion can catch this narrower type specifically.
+
+    terminal_state_name records the name of the TerminalState this
+    violation entered, when Invariant.on_violation was set -- a plain
+    string, not the real TerminalState object, for the same reason
+    LedgerEntry.identity_key is a plain string rather than an identity.py
+    object: it keeps this module dependency-free (exceptions.py is the
+    root of the package's import graph, and stays that way on purpose).
+    Before this field existed, "did this violation also trigger a
+    terminal state" was only recoverable by parsing the free-text reason
+    string for the phrase "entering terminal state" -- fragile, and an
+    external review correctly flagged that a PreNode failure, an ordinary
+    Invariant violation, and a violation that halted the system are three
+    operationally different events that deserve to be distinguished
+    structurally, not by string matching. None means either on_violation
+    was unset, or the raising adapter didn't populate this field.
     """
 
     invariant_name: str = ""
+    terminal_state_name: str | None = None
 
 
 class LedgerIntegrityError(VSLError):

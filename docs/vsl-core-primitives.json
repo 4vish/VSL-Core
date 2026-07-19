@@ -45,6 +45,19 @@
       ]
     },
     {
+      "name": "InvariantViolation",
+      "module": "vsl_core.exceptions",
+      "kind": "dataclass exception (subclasses AutomationDeniedException)",
+      "purpose": "Raised specifically when an Invariant's rule returns False -- not a bare AutomationDeniedException, so callers can distinguish 'no Fallback path, straight to Terminal' from an ordinary PreNode Fallback exhaustion.",
+      "fields": [
+        {"name": "reason", "type": "str", "required": true, "note": "inherited from AutomationDeniedException"},
+        {"name": "identity_key", "type": "str", "required": true, "note": "inherited"},
+        {"name": "instance_id", "type": "str | None", "default": null, "note": "inherited"},
+        {"name": "invariant_name", "type": "str", "default": "\"\""},
+        {"name": "terminal_state_name", "type": "str | None", "default": null, "note": "the TerminalState's name if Invariant.on_violation was set, else None. A plain string, not the real TerminalState object -- keeps exceptions.py dependency-free, same reasoning as LedgerEntry.identity_key being a plain string. Structurally distinguishes 'a violation that also halted the system' from 'a violation with no terminal consequence' -- previously only recoverable by parsing the free-text reason string."}
+      ]
+    },
+    {
       "name": "TerminalState",
       "module": "vsl_core.constructs",
       "kind": "dataclass (frozen)",
@@ -156,7 +169,7 @@
       ],
       "classmethods": [{"name": "new(identity_key=None)", "returns": "Instance"}],
       "methods": [
-        {"name": "re_enable(*, evidence)", "returns": "Instance", "warning": "bare mechanism, no authority check -- directly callable by anyone with an Evidence object. Prefer governance.request_re_enablement() for the audited path."}
+        {"name": "_re_enable(*, evidence)", "returns": "Instance", "warning": "bare mechanism, no authority check -- directly callable by anyone with an Evidence object despite the leading underscore. The underscore itself is the fix for a real gap: this was a public re_enable() until an external review flagged it as an easy accidental-bypass risk. Prefer governance.request_re_enablement() for the audited path."}
       ]
     },
     {
@@ -423,7 +436,8 @@
     "Assuming a TerminalState or ledger write happens automatically when a gate raises -- it doesn't; the calling code must catch the exception and write the entry itself.",
     "Reusing one Instance across multiple concurrent decisions without decision_id/caused_by -- can make audit() mismatch an unrelated entry as resolving the wrong one.",
     "Treating the Drift Class catalog (vsl_core.catalog) as an active scanner -- it's a reference taxonomy a monitor/rule function can consult, not executable detection logic on its own.",
-    "Calling Instance.re_enable() directly instead of governance.request_re_enablement() -- bypasses the authority/evidence audit trail.",
+    "Calling Instance._re_enable() directly instead of governance.request_re_enablement() -- bypasses the authority/evidence audit trail.",
+    "Distinguishing a plain InvariantViolation from one that also entered a TerminalState by parsing the reason string instead of checking the exception's terminal_state_name field directly.",
     "Describing VerbaLedger's hash chain as a cryptographic signature or proof of non-repudiation -- it's tamper-evidence (detects change after the fact), not identity-bound signing.",
     "Claiming HIGH assurance for a mechanism that only touches a prompt or sampling parameter behind a hosted API -- that caps at MEDIUM (F1=True, F2=PARTIAL)."
   ]

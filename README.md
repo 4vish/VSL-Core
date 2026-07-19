@@ -62,7 +62,7 @@ This is a distinct axis from **model-agnostic vs. model-specific** and **framewo
 | Cluster | `vsl_core.cluster.Cluster` |
 | Fallback | `vsl_core.constructs.Fallback` |
 | Identity Key / Cluster Key | `vsl_core.identity.IdentityKey` / `ClusterKey` |
-| Instance / Re-Enablement | `vsl_core.identity.Instance` (`.new()` / `.re_enable()`) |
+| Instance / Re-Enablement | `vsl_core.identity.Instance` (`.new()` / `._re_enable()` — bare mechanism, leading underscore on purpose; see the Re-Enablement section below) |
 | Automation-Denied | `vsl_core.exceptions.AutomationDeniedException` |
 | Human-Authorised Transition | `vsl_core.governance.HumanAuthorisedTransition` / `request_re_enablement()` |
 | Governance Authority | `vsl_core.governance.GovernanceAuthority` |
@@ -93,7 +93,7 @@ The source spec's Layer 0/1 vocabulary includes `Node` (a stabilised, repeatable
 
 ### Re-Enablement: the one sanctioned path out of a Terminal State
 
-`Instance.re_enable()` is a mechanism, not a policy gate — it's directly callable with just an `Evidence` object and has no concept of a `GovernanceAuthority`. The sanctioned, audited path is `governance.request_re_enablement()`, which pairs the new `Instance` with the `HumanAuthorisedTransition` record that authorises it, so you can't get one without the other:
+`Instance._re_enable()` is a mechanism, not a policy gate — it's directly callable with just an `Evidence` object and has no concept of a `GovernanceAuthority`. The leading underscore is deliberate (renamed from a public `re_enable()` after an external review correctly flagged the public name as an easy accidental-bypass risk) — it signals "not the sanctioned entry point," though Python still can't make that a hard guarantee. The sanctioned, audited path is `governance.request_re_enablement()`, which pairs the new `Instance` with the `HumanAuthorisedTransition` record that authorises it, so you can't get one without the other:
 
 ```python
 from vsl_core.identity import Instance, Evidence
@@ -116,7 +116,9 @@ new_instance, transition = request_re_enablement(
 # transition   -> write a HUMAN_AUTHORISED_TRANSITION ledger entry
 ```
 
-Like `AutomationDeniedException`'s "cannot be silently caught," this is a convention, not a language-enforced guarantee: nothing stops a caller from calling `Instance.re_enable()` directly and skipping the authority/evidence trail. Adapters and client code that need the audited path should always go through `request_re_enablement()`.
+Like `AutomationDeniedException`'s "cannot be silently caught," this is a convention, not a language-enforced guarantee: nothing stops a caller from calling `Instance._re_enable()` directly and skipping the authority/evidence trail. Adapters and client code that need the audited path should always go through `request_re_enablement()`.
+
+Also worth being precise about, for the same reason: an `InvariantViolation` now carries a `terminal_state_name: str | None` field — set to `on_violation.name` when the violated `Invariant` named one, `None` otherwise. This used to be recoverable only by parsing the free-text `reason` string for the phrase "entering terminal state"; a plain PreNode failure, an ordinary Invariant violation, and a violation that halted the system into a Terminal State are three operationally different events, and telling them apart shouldn't require string matching.
 
 ### VerbaLedger: causal correlation, schema versioning, and cross-process safety
 

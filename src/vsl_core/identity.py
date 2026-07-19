@@ -86,7 +86,7 @@ class Instance:
     limits, and history -- scoped by Identity Key.
 
     Instances are immutable; Re-Enablement never mutates an existing
-    Instance, it produces a new one (see re_enable()).
+    Instance, it produces a new one (see _re_enable()).
     """
 
     instance_id: str
@@ -107,8 +107,16 @@ class Instance:
             identity_key=identity_key or IdentityKey.generate(),
         )
 
-    def re_enable(self, *, evidence: Evidence) -> "Instance":
+    def _re_enable(self, *, evidence: Evidence) -> "Instance":
         """Restore eligibility after a Terminal State.
+
+        Named with a leading underscore on purpose: this is the bare
+        mechanism, not the sanctioned entry point, and the rename itself is
+        the fix for a real gap an external review caught -- a public
+        `re_enable()` invited direct use, when the only audited path should
+        ever be `governance.request_re_enablement()`. The underscore is a
+        stronger signal than a docstring warning alone, though Python still
+        can't make this a hard guarantee (see below).
 
         Always returns a brand-new Instance with a new IdentityKey; never
         mutates self, and the old Instance/IdentityKey are never reused --

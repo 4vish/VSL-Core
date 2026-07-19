@@ -74,7 +74,7 @@ def test_re_enable_creates_new_instance_with_new_identity_key():
         root_cause_analysis="alarm software infinite loop",
         specification_update_proposal="add heartbeat invariant",
     )
-    re_enabled = original.re_enable(evidence=evidence)
+    re_enabled = original._re_enable(evidence=evidence)
     assert re_enabled.instance_id != original.instance_id
     assert re_enabled.identity_key != original.identity_key
     assert re_enabled.predecessor_instance_id == original.instance_id
@@ -86,7 +86,7 @@ def test_re_enable_does_not_mutate_original_instance():
     original_id = original.instance_id
     original_key = original.identity_key
     evidence = Evidence(root_cause_analysis="root cause", specification_update_proposal="spec update")
-    original.re_enable(evidence=evidence)
+    original._re_enable(evidence=evidence)
     assert original.instance_id == original_id
     assert original.identity_key == original_key
 
@@ -94,13 +94,22 @@ def test_re_enable_does_not_mutate_original_instance():
 def test_re_enable_requires_a_real_evidence_object_not_loose_strings():
     original = Instance.new()
     with pytest.raises(TypeError):
-        original.re_enable(root_cause_analysis="a", specification_update_proposal="b")  # type: ignore[call-arg]
+        original._re_enable(root_cause_analysis="a", specification_update_proposal="b")  # type: ignore[call-arg]
 
 
 def test_re_enable_chain_increments_generation_each_time():
     gen0 = Instance.new()
-    gen1 = gen0.re_enable(evidence=Evidence(root_cause_analysis="a", specification_update_proposal="b"))
-    gen2 = gen1.re_enable(evidence=Evidence(root_cause_analysis="c", specification_update_proposal="d"))
+    gen1 = gen0._re_enable(evidence=Evidence(root_cause_analysis="a", specification_update_proposal="b"))
+    gen2 = gen1._re_enable(evidence=Evidence(root_cause_analysis="c", specification_update_proposal="d"))
     assert gen1.generation == 1
     assert gen2.generation == 2
     assert gen2.predecessor_instance_id == gen1.instance_id
+
+
+def test_re_enable_has_no_public_name_anymore():
+    # Locks in the rename: the bare mechanism is _re_enable (leading
+    # underscore, signalling "not the sanctioned entry point"). A public
+    # re_enable() was the exact bypass risk an external review flagged --
+    # this test fails loudly if that public name ever comes back.
+    assert not hasattr(Instance, "re_enable")
+    assert hasattr(Instance, "_re_enable")

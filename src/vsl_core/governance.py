@@ -100,18 +100,19 @@ def request_re_enablement(
 
     Routes through HumanAuthorisedTransition.authorise() (real
     GovernanceAuthority + named human approver + validated Evidence) and
-    Instance.re_enable() (mechanism). Both entries -- RE_ENABLEMENT for the
+    Instance._re_enable() (mechanism). Both entries -- RE_ENABLEMENT for the
     new Instance, HUMAN_AUTHORISED_TRANSITION for the authorisation record
     -- are what a caller should then write to a VerbaLedger.
 
     This is a convenience/policy wrapper, not a language-enforced gate:
-    Instance.re_enable() remains directly callable on its own (see its
-    docstring) -- exactly the same non-enforcement shape as
+    Instance._re_enable() remains directly callable on its own (see its
+    docstring, and the leading underscore signalling it isn't the sanctioned
+    entry point) -- exactly the same non-enforcement shape as
     AutomationDeniedException's "cannot be silently caught," documented
     rather than silently assumed away.
     """
     transition = HumanAuthorisedTransition.authorise(authority, authorised_by=authorised_by, evidence=evidence)
-    new_instance = instance.re_enable(evidence=evidence)
+    new_instance = instance._re_enable(evidence=evidence)
     return new_instance, transition
 
 

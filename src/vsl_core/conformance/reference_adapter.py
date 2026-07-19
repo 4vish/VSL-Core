@@ -32,12 +32,14 @@ class PlainPythonReferenceAdapter:
             holds = await invariant.rule(candidate_input)
             if not holds:
                 reason = f"Invariant '{invariant.name}' violated"
-                if invariant.on_violation is not None:
-                    reason += f" -- entering terminal state '{invariant.on_violation.name}'"
+                terminal_state_name = invariant.on_violation.name if invariant.on_violation is not None else None
+                if terminal_state_name is not None:
+                    reason += f" -- entering terminal state '{terminal_state_name}'"
                 raise InvariantViolation(
                     reason=reason,
                     identity_key="conformance-test",
                     invariant_name=invariant.name,
+                    terminal_state_name=terminal_state_name,
                 )
 
         return gate

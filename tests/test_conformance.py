@@ -137,6 +137,9 @@ def test_reference_adapter_invariant_reason_includes_terminal_state_when_set():
         with pytest.raises(InvariantViolation) as excinfo:
             await gate("candidate")
         assert "governance_failure_terminal" in str(excinfo.value)
+        # Structured field, not just the free-text reason -- checkable
+        # directly without parsing the sentence.
+        assert excinfo.value.terminal_state_name == "governance_failure_terminal"
 
     asyncio.run(run())
 
@@ -153,6 +156,7 @@ def test_reference_adapter_invariant_reason_unchanged_when_on_violation_unset():
         with pytest.raises(InvariantViolation) as excinfo:
             await gate("candidate")
         assert "entering terminal state" not in str(excinfo.value)
+        assert excinfo.value.terminal_state_name is None
 
     asyncio.run(run())
 

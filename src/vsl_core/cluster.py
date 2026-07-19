@@ -76,7 +76,7 @@ class Cluster:
     def add_constituent(self, identity_key: IdentityKey) -> "Cluster":
         """Return a new Cluster with `identity_key` added and cluster_key
         recomputed. Immutable-by-convention, consistent with
-        vsl_core.identity.Instance.re_enable.
+        vsl_core.identity.Instance._re_enable.
         """
         new_constituents = tuple(self.constituents) + (identity_key,)
         new_cluster_key = ClusterKey.from_constituents(new_constituents)
