@@ -72,19 +72,36 @@ def test_fallback_defaults_match_spec():
 
 
 def test_invariant_cannot_be_bypassed_defaults_true():
-    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true)
+    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
     assert invariant.cannot_be_bypassed is True
     assert invariant.scope == "ALL_STATES"
 
 
+def test_invariant_requires_assurance_basis_no_default():
+    # Same discipline as PreNode: no default HIGH, must be justified explicitly.
+    with pytest.raises(TypeError):
+        Invariant(name=_unique_name("inv"), description="d", rule=_always_true)  # type: ignore[call-arg]
+
+
+def test_invariant_assurance_level_matches_pre_node_derivation():
+    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
+    assert invariant.assurance_level == AssuranceLevel.HIGH
+
+
 def test_invariant_on_violation_defaults_to_none():
-    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true)
+    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
     assert invariant.on_violation is None
 
 
 def test_invariant_on_violation_round_trips_when_set():
     terminal = TerminalState(name="governance_failure_terminal", description="d")
-    invariant = Invariant(name=_unique_name("inv"), description="d", rule=_always_true, on_violation=terminal)
+    invariant = Invariant(
+        name=_unique_name("inv"),
+        description="d",
+        rule=_always_true,
+        assurance_basis=_HIGH_ASSURANCE_BASIS,
+        on_violation=terminal,
+    )
     assert invariant.on_violation is terminal
     assert invariant.on_violation.name == "governance_failure_terminal"
 
@@ -133,15 +150,15 @@ def test_pre_node_rejects_non_positive_delta_factor():
 
 def test_register_invariant_and_lookup():
     name = _unique_name("registered")
-    invariant = Invariant(name=name, description="d", rule=_always_true)
+    invariant = Invariant(name=name, description="d", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
     register_invariant(invariant)
     assert invariant in registered_invariants()
 
 
 def test_register_invariant_rejects_duplicate_name():
     name = _unique_name("dup")
-    invariant_a = Invariant(name=name, description="a", rule=_always_true)
-    invariant_b = Invariant(name=name, description="b", rule=_always_true)
+    invariant_a = Invariant(name=name, description="a", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
+    invariant_b = Invariant(name=name, description="b", rule=_always_true, assurance_basis=_HIGH_ASSURANCE_BASIS)
     register_invariant(invariant_a)
     with pytest.raises(ValueError):
         register_invariant(invariant_b)

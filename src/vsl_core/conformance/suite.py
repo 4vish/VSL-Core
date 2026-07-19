@@ -124,6 +124,7 @@ async def _check_invariant_violation_is_specific_type(adapter: VSLAdapter) -> li
         name="conformance-invariant-fail",
         description="Conformance check: a failing rule must raise InvariantViolation.",
         rule=failing_rule,
+        assurance_basis=_HIGH_ASSURANCE_BASIS,
     )
     gate = adapter.compile_invariant(invariant)
     _require_callable_gate(adapter, "compile_invariant", gate)
@@ -156,6 +157,7 @@ async def _check_invariant_pass(adapter: VSLAdapter) -> list[str]:
         name="conformance-invariant-pass",
         description="Conformance check: a passing rule must not raise.",
         rule=passing_rule,
+        assurance_basis=_HIGH_ASSURANCE_BASIS,
     )
     gate = adapter.compile_invariant(invariant)
     _require_callable_gate(adapter, "compile_invariant", gate)

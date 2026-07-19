@@ -52,7 +52,7 @@ def test_reference_adapter_invariant_violation_is_specific_type():
     async def failing_rule(_candidate_input):
         return False
 
-    invariant = Invariant(name="test-invariant", description="d", rule=failing_rule)
+    invariant = Invariant(name="test-invariant", description="d", rule=failing_rule, assurance_basis=_HIGH_ASSURANCE_BASIS)
     adapter = PlainPythonReferenceAdapter()
     gate = adapter.compile_invariant(invariant)
 
@@ -123,7 +123,13 @@ def test_reference_adapter_invariant_reason_includes_terminal_state_when_set():
         return False
 
     terminal = TerminalState(name="governance_failure_terminal", description="d")
-    invariant = Invariant(name="test-invariant-linked", description="d", rule=failing_rule, on_violation=terminal)
+    invariant = Invariant(
+        name="test-invariant-linked",
+        description="d",
+        rule=failing_rule,
+        assurance_basis=_HIGH_ASSURANCE_BASIS,
+        on_violation=terminal,
+    )
     adapter = PlainPythonReferenceAdapter()
     gate = adapter.compile_invariant(invariant)
 
@@ -139,7 +145,7 @@ def test_reference_adapter_invariant_reason_unchanged_when_on_violation_unset():
     async def failing_rule(_candidate_input):
         return False
 
-    invariant = Invariant(name="test-invariant-unlinked", description="d", rule=failing_rule)
+    invariant = Invariant(name="test-invariant-unlinked", description="d", rule=failing_rule, assurance_basis=_HIGH_ASSURANCE_BASIS)
     adapter = PlainPythonReferenceAdapter()
     gate = adapter.compile_invariant(invariant)
 

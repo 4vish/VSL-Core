@@ -82,6 +82,15 @@ class Invariant:
     """A persistent Constraint that cannot be bypassed. Violation triggers
     IMMEDIATE_TERMINAL_STATE per the spec, not an ordinary Fallback.
 
+    assurance_basis is required, same discipline as AllowedState/PreNode:
+    the source spec's own INVARIANT pseudocode example carries an
+    ASSURANCE_LEVEL field alongside PRE_NODE and ALLOWED_STATE's (only
+    INADMISSIBLE_STATE's example lacks one) -- Invariant was missed when
+    AssuranceBasis was first added to close the F1/F2 structural-
+    enforcement gap, caught later via a compliance-mapping cross-check
+    against the spec's own pseudocode. assurance_level is derived from it,
+    same pattern as AllowedState/PreNode: not settable directly.
+
     on_violation names which TerminalState that immediate transition is
     into. It's optional (an Invariant can exist before its Terminal State
     is decided), but when set, an adapter catching InvariantViolation for
@@ -92,9 +101,14 @@ class Invariant:
     name: str
     description: str
     rule: Callable[[Any], Awaitable[bool]]
+    assurance_basis: AssuranceBasis
     scope: str = "ALL_STATES"
     cannot_be_bypassed: bool = True
     on_violation: TerminalState | None = None
+
+    @property
+    def assurance_level(self) -> AssuranceLevel:
+        return self.assurance_basis.derived_level
 
 
 @dataclass(frozen=True)
