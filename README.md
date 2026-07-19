@@ -114,6 +114,18 @@ new_instance, transition = request_re_enablement(
 
 Like `AutomationDeniedException`'s "cannot be silently caught," this is a convention, not a language-enforced guarantee: nothing stops a caller from calling `Instance.re_enable()` directly and skipping the authority/evidence trail. Adapters and client code that need the audited path should always go through `request_re_enablement()`.
 
+### VerbaLedger: causal correlation, schema versioning, and cross-process safety
+
+Three additions to the ledger, all backward-compatible — existing single-decision-at-a-time callers are unaffected.
+
+**Causal correlation.** `audit()`'s checks originally matched entries only by "same `identity_key`/`instance_id` and a later timestamp" — which can mismatch when a single `Instance` has more than one decision in flight at once (e.g. a payment check and an email verification interleaved on the same agent, where the unrelated email `PRE_NODE` could look like it resolves the payment `MONITOR`'s drift). `write()`/`write_monitor()`/`write_verification()` now accept optional `decision_id`/`caused_by` kwargs; `caused_by` lets an entry name the exact prior `entry_id` it resolves, and `audit()` matches causally whenever it's set, falling back to the old heuristic only when it's absent. Both fields are part of the hash chain, so a forged causal claim is detectable the same way a forged payload is.
+
+**Schema versioning.** `LedgerEntry.schema_version` records which shape of the entry wrote it (`LEDGER_SCHEMA_VERSION`, currently `"1.0"`). `VerbaLedger.write()` stamps it on every entry it constructs; a bare `LedgerEntry(...)` built directly — or one reconstructed from a persisted entry that predates this field — doesn't silently claim a version it wasn't actually written under.
+
+**Checkpoints.** `VerbaLedger.current_checkpoint()` returns a `LedgerCheckpoint` (`sequence`, `entry_hash`, `checked_at`) — the one fact an external anchoring service would need to independently witness the chain over time. `verify_integrity()` only proves internal consistency of whatever entries the store currently holds; it can't detect truncation or wholesale replacement with an older, still-consistent snapshot. vsl-core exposes this value and stops there — it does no anchoring, signing, or networking itself.
+
+**Cross-process safety.** `JsonlLedgerStore.append()`'s read-last-entry-then-write sequence is now guarded by an OS-level advisory lock (`fcntl.flock` on POSIX, `msvcrt.locking` on Windows) on a sibling `.lock` file, not just the in-process `threading.RLock`. Two separate `JsonlLedgerStore` instances — in one process or several — writing to the same file can no longer race and corrupt the sequence/hash chain.
+
 ## The Drift Class / Stabilisation Operator catalog (`vsl_core.catalog`)
 
 Loads two real data files (Paper 5, "Toward a Basis Representation of Drift Forensics"): 45 Drift Classes across five categories (external, internal, systemic, linguistic, authority) tagged by evidence tier (A = well evidenced, B = theoretically grounded, C = hypothesised, D = a limit class possibly unfixable by any operator), and 10 Stabilisation Operators.
@@ -161,7 +173,7 @@ src/vsl_core/
 ├── exceptions.py       exception hierarchy
 ├── metrics.py          Delta, Gamma, GES, EEF, Beta, Threshold, AssuranceBasis
 ├── identity.py         IdentityKey, ClusterKey, Instance, Evidence
-├── ledger.py           VerbaLedger, hash-chained LedgerEntry, audit checks
+├── ledger.py           VerbaLedger, hash-chained LedgerEntry, causal audit checks, checkpoints
 ├── constructs.py       AllowedState, PreNode, Invariant, TerminalState
 ├── cluster.py          Cluster, ClusterPreNode
 ├── governance.py       GovernanceAuthority, HumanAuthorisedTransition, Proofing, Binding, Specification

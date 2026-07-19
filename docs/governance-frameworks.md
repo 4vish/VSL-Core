@@ -26,7 +26,7 @@ These are real, tested vsl-core constructs (137 tests passing, `run_conformance_
 | **AssuranceBasis** (`metrics.py`) | A derived, read-only grade (HIGH/MEDIUM/LOW) computed from two facts you supply: was this checked *before* commitment (F1), and how completely does the check modify the outcome (F2: FULL/PARTIAL/INDIRECT/NONE). You can't just assert HIGH — you have to state what makes it HIGH, and the grade is recomputed from those facts every time. |
 | **Cluster** (`cluster.py`) | Aggregates constituent systems by `IdentityKey` (not by process `Instance`), with construction-time validation that every declared constituent is actually covered by the cluster's own key. An attempt at "a cluster can't silently omit one of its own members" — not a claim that multi-agent composition risk is solved. |
 | **Identity layer + `request_re_enablement()`** (`identity.py`, `governance.py`) | Scoped agent/instance identity, plus a single named path back into operation after a suspension — one that requires a `GovernanceAuthority`, a named human approver, and structured `Evidence` before it will construct a `HumanAuthorisedTransition`. |
-| **VerbaLedger** (`ledger.py`) | A hash-chained, append-only log with seven entry types and an `audit()` method running five named cross-referencing checks (not just presence checks). A single-byte tamper anywhere in a persisted chain flips `verify_integrity()` from `True` to `False` — confirmed live, not just claimed. |
+| **VerbaLedger** (`ledger.py`) | A hash-chained, append-only log with seven entry types and an `audit()` method running five named cross-referencing checks (not just presence checks). A single-byte tamper anywhere in a persisted chain flips `verify_integrity()` from `True` to `False` — confirmed live, not just claimed. `current_checkpoint()` exposes the chain's current tip for external witnessing (Artifact 6) — it does no anchoring or signing itself. |
 | **VerbaCertificate** (`ledger.py`) | `issue_certificate()` returns `None` if any audit check fails. It does not fabricate a passing certificate, and the certificate itself carries a disclaimer (surfaced in `__str__`) that it certifies the governance *process*, not the underlying system. |
 | **Drift Class catalog** (`catalog/`) | A taxonomy of 45 named failure modes, each detection heuristic honestly graded by confidence — 10 of the 45 are marked as having zero detection heuristics today. This is a disclosure discipline, not an enforcement mechanism. |
 
@@ -201,6 +201,14 @@ evidence=('Booking gate blocked all candidates; provider cache was stale.',
 authorisation_evidence_hash='3ec193a45b34acf2...'
 ```
 
+**Artifact 6 — `current_checkpoint()`, before and after two writes:**
+```
+Empty ledger:  None
+After write 1: sequence=0, entry_hash=a38f5cd58112d133...
+After write 2: sequence=1, entry_hash=32d74d9c98aabdc4...
+```
+This is the one fact an external anchoring service would need to independently witness the chain over time — record this value outside the operator's control at intervals, and a later checkpoint with a lower sequence, or the same sequence with a different hash, proves the local chain was altered after the fact. vsl-core exposes this value and stops there; it does not sign it, transmit it, or store it anywhere itself. This is the concrete answer to every "not signed / not immutable" caveat elsewhere in this document — it's the seam, not the fix.
+
 ---
 
 ## Framework by framework: how one might approach each one's stated goals
@@ -218,7 +226,7 @@ Each entry below states the framework's own goal, in its own words (with the pri
 - **ASI07 Insecure Inter-Agent Communication** — real mitigations are mostly transport/crypto (mTLS, PKI, signed messages). *An attempt, narrower than the full requirement:* Example E can check that a cluster's declared membership matches what its `ClusterKey` actually covers, preventing a specific class of silent-omission mistake — it doesn't secure the wire protocol, and it isn't a general answer to inter-agent trust.
 - **ASI08 Cascading Agent Failures** — real mitigations include "governance drift detection" and "logging and non-repudiation." *An attempt:* Example D's hash-chaining gives tamper-evidence — a change to any past entry is detectable — which is the detection half of that requirement; it doesn't by itself provide non-repudiation in the stronger cryptographic sense (proving *who* wrote an entry), which would need signing tied to a verified identity. Example E's membership-consistency check is a narrower piece of the "individually-safe agents composing into a cluster-level failure" problem, not a full answer to it.
 - **ASI09 Human-Agent Trust Exploitation** — real mitigations call for "explicit confirmations... human in the loop" and "content provenance... digital signature validation." *An attempt:* Example C records the named human authoriser and hashes the associated evidence (Artifact 5); Example D supplies a tamper-evident provenance trail alongside it (Artifact 2). Neither is a digital signature — that would need an added PKI or signing layer binding a record to a verified identity's private key.
-- **ASI10 Rogue Agents** — real mitigations include "immutable signed audit logs" and "recovery requiring fresh attestation and human approval." *An attempt:* Example D addresses the tamper-evident-record half, Example C the evidence-backed human re-authorisation half — together, not the same as "immutable" (which implies protected external storage vsl-core doesn't provide) or "signed" (cryptographic attestation, which it also doesn't provide on its own).
+- **ASI10 Rogue Agents** — real mitigations include "immutable signed audit logs" and "recovery requiring fresh attestation and human approval." *An attempt:* Example D addresses the tamper-evident-record half, Example C the evidence-backed human re-authorisation half — together, not the same as "immutable" (which implies protected external storage vsl-core doesn't provide) or "signed" (cryptographic attestation, which it also doesn't provide on its own). `current_checkpoint()` (Artifact 6) is the exposed seam for adding that external protection; vsl-core stops at exposing the value.
 
 ### NIST AI RMF 1.0 + Generative AI Profile (NIST AI 600-1)
 
