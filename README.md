@@ -49,6 +49,22 @@ The full derivation table (`F1=False` always → LOW regardless of F2; `F1=True`
 
 This is a distinct axis from **model-agnostic vs. model-specific** and **framework-agnostic vs. framework-specific** — see the module docstrings in `constructs.py` and `ledger.py` for why conflating those two axes was a real mistake worth avoiding structurally, not just documenting.
 
+## The ledger doesn't write itself (read this before assuming an audit trail exists)
+
+Nothing in this package writes to `VerbaLedger` automatically. Compiling and calling a gate (`compile_pre_node`/`compile_invariant`, then `await gate(...)`) is the only part of governance that happens without you asking for it — it will raise `AutomationDeniedException`/`InvariantViolation` on its own, every time, correctly. Recording that it happened is a separate, deliberate act your own code must perform:
+
+```python
+try:
+    await gate(candidate_input)
+except InvariantViolation:
+    ledger.write(LedgerEntryType.TERMINAL, identity_key=..., payload={...})
+    raise
+else:
+    ledger.write_monitor(identity_key=..., drift_detected=False)
+```
+
+If you never call `ledger.write*` anywhere in your agent, you get real, working governance gates and zero audit trail — `vsl-core` will not warn you this happened, because from its point of view nothing went wrong: the gates it owns did exactly what they were compiled to do. An empty or missing `VerbaLedger` is indistinguishable, from inside this package, from an agent that has never once been gated. See [`docs/building-with-vsl-core.md`](docs/building-with-vsl-core.md)'s "know what's automatic and what you write yourself" for the full breakdown of which of the five steps (construct, compile, call, log, escalate) are automatic and which are entirely on you.
+
 ## VSL construct → vsl_core object
 
 | VSL construct | vsl_core object |
@@ -153,6 +169,8 @@ A framework adapter must implement `vsl_core.conformance.protocol.VSLAdapter` (`
 3. Raise `InvariantViolation` specifically (not a bare `AutomationDeniedException`) when an `Invariant` fails.
 4. Don't raise when an `Invariant` holds.
 5. Are safely reusable — no state leaks between calls on the same compiled gate.
+
+Deliberately absent from this list: writing to `VerbaLedger`. Ledger writes are the calling application's responsibility, never the adapter's — see [The ledger doesn't write itself](#the-ledger-doesnt-write-itself-read-this-before-assuming-an-audit-trail-exists) above. A conformant adapter should not call `ledger.write*` internally; doing so would silently couple gate compilation to a logging policy the application may not want.
 
 `vsl_core.conformance.reference_adapter.PlainPythonReferenceAdapter` is the minimal reference implementation — proof the contract is satisfiable at all, not merely specified on paper.
 
